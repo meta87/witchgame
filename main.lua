@@ -183,7 +183,7 @@ end
 powerGaugeNum = 0
 function arrowSelect(event)
 	arrowStop = 1
-	local arrow = event.target 
+    arrow = event.target 
 	arrowAngle = arrow.rotation
 	print (arrowAngle)
 	if (arrowStop == 1) then
@@ -196,14 +196,12 @@ end
 
 camTarget = '-char.x'
 
-local function moveCamera()
+local function moveCamera() -- Camera switches from tracking char, then ball when tossed
 --	game.y = -ball.y + screenH /2
 	if ballShot == 0 then
 	game.x = -char.x + screenW /2
-	print ("boo")
 	else if ballShot == 1 then
 	game.x = -ball.x + screenW /2
-	print ("yay")
 	end end
 --[[	if (ballShot == 1) then
 	moveCameraBall()

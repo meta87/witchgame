@@ -19,7 +19,7 @@ background:toBack()
 
 local physicsData = (require "ball").physicsData()
 local ball = display.newImage("images/ball.png")
-ball.x = screenW / 2; ball.y = 550
+ball.x = screenW / 2; ball.y = screenH / 2
 physics.addBody( ball, physicsData:get("ball") )
 game:insert( ball )
 ball.myName = "ball"

@@ -1,0 +1,31 @@
+Gorilla Game Ideas
+
+Throw banana by choosing a moving arrow for direction and moving guage for power.
+
+Have special powers to dodge banana, like jump to next building
+
+when banana hits building, it smooshes, then explodes. 
+
+camera tracks with banana after toss, consider not showing player other players location so they have to send out "scout bananas"
+
+have levels look like a city skyscraper, different shapes of buildings, people shaking fists out windows   
+
+Power ups when you hit different things with bananas. (One power up could give u a shield etc)
+
+Special banana powerups! Frozen banana, that keeps going into more blocks...
+MORE POWERUPS: THROW ITEM THAT MAKES A WALL WHEN YOU PRESS AGAIN. THROW AN ITEM THAT MAKES YOU TELEPORT TO WHEREVER IT LANDS
+Also, the ability to jetpack up so that you change the angle of the toss.
+Another Powerup: Make the other player's power gauge or angle go really fast or act nonsensical. 
+
+
+winddddd
+
+The Pointer is a gorilla finger! animate the hand!
+The strength is blood boiling with smoke
+
+local multiplayer turn based
+
+certain things explode your banana (the sun, or a passing bird eating it)
+
+HAVE A Transculent indication of the power and angle of the previous shot. 
+

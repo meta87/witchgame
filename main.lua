@@ -8,6 +8,9 @@ end
 
 local physics = require "physics"
 physics.start(); 
+
+local physicsData = (require "shapedefs").physicsData() -- This is physicseditor
+
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local game = display.newGroup();
 game.x = 0
@@ -15,15 +18,25 @@ game.x = 0
 local background = display.newImage("images/background.png")
 background:toBack()
 
--- Banana Object
+-- Character Object
 
-local physicsData = (require "banana").physicsData()
-local banana = display.newImage("images/banana.png")
-banana.x = screenW / 2; banana.y = 550
-physics.addBody( banana, physicsData:get("banana") )
-game:insert( banana )
-banana.myName = "banana"
+local char = display.newImage("images/char.png")
+char.x = 300 char.y = screenH -90
+physics.addBody( char, physicsData:get("char") )
+game:insert( char )
+char.myName = "char"
 
+-- Ball Object
+
+local function ballcreate()
+
+	local ball = display.newImage("images/ball.png")
+	ball.x = char.x + 40 ball.y = char.y + 40
+	physics.addBody( ball, physicsData:get("ball") )
+	game:insert( ball )
+	ball.myName = "ball"
+
+end
 -- enemy object
 
 local enemy = display.newRect(2500, 200, 50, 250)
@@ -59,10 +72,8 @@ local function populate()
 end
 
 populate()
-banana:toFront()
 
-
--- banana toss gui
+-- ball toss gui
 
 local arrow = display.newImage("images/arrow.png")
 arrow.y = screenH - 50; arrow.x = 200
@@ -125,6 +136,13 @@ dispObj_6.y = 254
 game:insert (dispObj_6)
 physics.addBody( dispObj_6, { density=1, friction=0.3, bounce=0.2 } )
 
+-- Char move Function
+
+local function onTilt(event)
+ 
+char.x = 30*event.xGravity
+
+end
 -- Arrow Rotation Function
 rotationDirection = 1
 arrowStop = 0
@@ -139,17 +157,24 @@ local function arrowRotate()
 	end end
 end
 
--- banana Shoot uses arrow Touch and stopButton Functions
-local bananaShot = 0
-local function bananaShoot()
-	if (powerGaugeStop == 1 and arrowStop == 1 and bananaShot == 0) then
+-- Ball Shoot uses arrow Touch and stopButton Functions
+
+local ballShot = 0
+local ball
+function ballShoot()
+	if (powerGaugeStop == 1 and arrowStop == 1 and ballShot == 0) then
 	print (forceY)
+	ball = display.newImage("images/ball.png")
+	ball.x = char.x + 40 ball.y = char.y + 40
+	physics.addBody( ball, physicsData:get("ball") )
+	game:insert( ball )
+	ball.myName = "ball"
 	local angle = math.rad(arrow.rotation)
 	forceMagnitude = powerGaugeNum
 	forceX = math.cos(angle)*forceMagnitude 
 	forceY = math.sin(angle)*forceMagnitude
-	banana:applyLinearImpulse( forceX, forceY, banana.x, banana.y )
-	bananaShot = 1
+	ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
+	ballShot = 1
 	end
 	return true
 end
@@ -162,16 +187,32 @@ function arrowSelect(event)
 	arrowAngle = arrow.rotation
 	print (arrowAngle)
 	if (arrowStop == 1) then
-	bananaShoot()
+	ballShoot()
 	end
 	return true
 end
 
 -- Move Camera Function
-function moveCamera()
---	game.y = -banana.y + screenH /2
-	game.x = -banana.x + screenW /2
+
+camTarget = '-char.x'
+
+local function moveCamera()
+--	game.y = -ball.y + screenH /2
+	if ballShot == 0 then
+	game.x = -char.x + screenW /2
+	print ("boo")
+	else if ballShot == 1 then
+	game.x = -ball.x + screenW /2
+	print ("yay")
+	end end
+--[[	if (ballShot == 1) then
+	moveCameraBall()
+	print ("Done")
+	end
+]]--
 end
+
+
 
 -- Power Gauge Function
 local powerGaugeMove
@@ -198,15 +239,15 @@ local function stopButton(event)
 	transition.cancel(moveDown)
 	transition.cancel(moveUp)
 	if (arrowStop == 1) then
-	bananaShoot()
+	ballShoot()
 	end
 end
 
--- Detect Banana Collision Functions
+-- Detect Ball Collision Functions
 
-local function onBananaCollide(event)
+local function onBallCollide(event)
 	if ( event.phase == "ended") then
-		if event.object1.myName == "banana" and event.object2.myName == "building" then
+		if event.object1.myName == "ball" and event.object2.myName == "building" then
 			timer.performWithDelay(500, event.object2:removeSelf())
 			print ("touched")
 		end
@@ -217,7 +258,9 @@ end
 -- Runtimes ETC
 
 powerGauge:addEventListener("tap", stopButton)
-Runtime:addEventListener("collision", onBananaCollide)
+Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
+
 Runtime:addEventListener("enterFrame", arrowRotate)
 arrow:addEventListener("tap", arrowSelect)
+Runtime:aEventListener ("accelerometer", onTilt);

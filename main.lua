@@ -15,14 +15,14 @@ game.x = 0
 local background = display.newImage("images/background.png")
 background:toBack()
 
--- Banana Object
+-- Ball Object
 
-local physicsData = (require "banana").physicsData()
-local banana = display.newImage("images/banana.png")
-banana.x = screenW / 2; banana.y = 550
-physics.addBody( banana, physicsData:get("banana") )
-game:insert( banana )
-banana.myName = "banana"
+local physicsData = (require "ball").physicsData()
+local ball = display.newImage("images/ball.png")
+ball.x = screenW / 2; ball.y = 550
+physics.addBody( ball, physicsData:get("ball") )
+game:insert( ball )
+ball.myName = "ball"
 
 -- enemy object
 
@@ -59,7 +59,7 @@ local function populate()
 end
 
 populate()
-banana:toFront()
+ball:toFront()
 
 
 -- banana toss gui
@@ -148,7 +148,7 @@ local function bananaShoot()
 	forceMagnitude = powerGaugeNum
 	forceX = math.cos(angle)*forceMagnitude 
 	forceY = math.sin(angle)*forceMagnitude
-	banana:applyLinearImpulse( forceX, forceY, banana.x, banana.y )
+	ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
 	bananaShot = 1
 	end
 	return true
@@ -169,8 +169,8 @@ end
 
 -- Move Camera Function
 function moveCamera()
---	game.y = -banana.y + screenH /2
-	game.x = -banana.x + screenW /2
+--	game.y = -ball.y + screenH /2
+	game.x = -ball.x + screenW /2
 end
 
 -- Power Gauge Function
@@ -206,7 +206,7 @@ end
 
 local function onBananaCollide(event)
 	if ( event.phase == "ended") then
-		if event.object1.myName == "banana" and event.object2.myName == "building" then
+		if event.object1.myName == "ball" and event.object2.myName == "building" then
 			timer.performWithDelay(500, event.object2:removeSelf())
 			print ("touched")
 		end

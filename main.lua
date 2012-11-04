@@ -8,6 +8,9 @@ end
 
 local physics = require "physics"
 physics.start(); 
+
+local physicsData = (require "shapedefs").physicsData() -- This is physicseditor
+
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local game = display.newGroup();
 game.x = 0
@@ -15,9 +18,16 @@ game.x = 0
 local background = display.newImage("images/background.png")
 background:toBack()
 
+-- Character Object
+
+local char = display.newImage("images/char.png")
+char.x = 300 char.y = screenH -90
+physics.addBody( char, physicsData:get("char") )
+game:insert( char )
+char.myName = "char"
+
 -- Ball Object
 
-local physicsData = (require "ball").physicsData()
 local ball = display.newImage("images/ball.png")
 ball.x = screenW / 2; ball.y = screenH / 2
 physics.addBody( ball, physicsData:get("ball") )
@@ -125,6 +135,13 @@ dispObj_6.y = 254
 game:insert (dispObj_6)
 physics.addBody( dispObj_6, { density=1, friction=0.3, bounce=0.2 } )
 
+-- Char move Function
+
+local function onTilt(event)
+ 
+char.x = 30*event.xGravity
+
+end
 -- Arrow Rotation Function
 rotationDirection = 1
 arrowStop = 0
@@ -221,3 +238,4 @@ Runtime:addEventListener("collision", onBananaCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("enterFrame", arrowRotate)
 arrow:addEventListener("tap", arrowSelect)
+Runtime:addEventListener ("accelerometer", onTilt);

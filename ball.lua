@@ -25,9 +25,9 @@ function M.physicsData(scale)
                     
                     
                     {
-                    pe_fixture_id = "ball", density = 1.2, friction = 0.5, bounce = 0.6, 
+                    pe_fixture_id = "ball", density = 0.7, friction = 0.5, bounce = 0.6, 
                     filter = { categoryBits = 1, maskBits = 65535, groupIndex = 0 },
-                    radius = 16.031
+                    radius = 14.000
                     }
                     
                     

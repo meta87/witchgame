@@ -157,6 +157,8 @@ local function arrowRotate()
 	end end
 end
 
+
+
 -- Ball Shoot uses arrow Touch and stopButton Functions
 
 local ballShot = 0
@@ -178,6 +180,30 @@ function ballShoot()
 	end
 	return true
 end
+--  On touch ball shoot function
+local function ballShootOnTouch(event)
+	if (event.phase == "began") then
+        display.getCurrentStage():setFocus( self )
+        dx=event.x-char.x
+	    dy=event.y-char.y
+		distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
+		ball2 = display.newImage("images/ball.png")
+		physics.addBody( ball2, physicsData:get("ball") )
+		ball2.myName = "ball2"
+		game:insert( ball2 )
+		ball2.x = localx ball2.y = localy
+	--[[touchSlope=event.y-char.y/event.x-char.y
+		print (touchSlope,"slope")
+		local angle = math.rad(touchSlope)
+		forceMagnitude = distance / 10
+		forceX = math.cos(angle)*forceMagnitude 
+		forceY = math.sin(angle)*forceMagnitude
+		ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
+		print (distance)
+	]]	
+    end
+	return true
+end
 
 -- Arrow Touch Function
 powerGaugeNum = 0
@@ -193,9 +219,6 @@ function arrowSelect(event)
 end
 
 -- Move Camera Function
-
-camTarget = '-char.x'
-
 local function moveCamera() -- Camera switches from tracking char, then ball when tossed
 --	game.y = -ball.y + screenH /2
 	if ballShot == 0 then
@@ -203,11 +226,6 @@ local function moveCamera() -- Camera switches from tracking char, then ball whe
 	else if ballShot == 1 then
 	game.x = -ball.x + screenW /2
 	end end
---[[	if (ballShot == 1) then
-	moveCameraBall()
-	print ("Done")
-	end
-]]--
 end
 
 
@@ -218,13 +236,10 @@ local powerGaugeMoveBack
 
 powerGaugeMoveBack = function()
 	moveUp = transition.to( powerGauge, { time=1000, yScale=200, onComplete=powerGaugeMove } )
-	print ("2")
-
 end
 
 powerGaugeMove = function()
 	moveDown = transition.to( powerGauge, { time=1000, yScale=1, onComplete=powerGaugeMoveBack } )
-	print ("1")
 end
 
 powerGaugeMove()
@@ -258,7 +273,7 @@ end
 powerGauge:addEventListener("tap", stopButton)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
-
+Runtime:addEventListener("touch", ballShootOnTouch)
 Runtime:addEventListener("enterFrame", arrowRotate)
 arrow:addEventListener("tap", arrowSelect)
 Runtime:aEventListener ("accelerometer", onTilt);

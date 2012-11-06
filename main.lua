@@ -1,7 +1,7 @@
 display.setStatusBar( display.HiddenStatusBar )
 
 local loqsprite = require('loq_sprite')
-require("loq_profiler").createProfiler()
+--require("loq_profiler").createProfiler()
 
 local function createProfiler(	_onTop,_collect	)
 end
@@ -17,6 +17,10 @@ game.x = 0
 
 local background = display.newImage("images/background.png")
 background:toBack()
+
+
+
+	
 
 -- Character Object
 
@@ -140,7 +144,7 @@ physics.addBody( dispObj_6, { density=1, friction=0.3, bounce=0.2 } )
 
 local function onTilt(event)
  
-char.x = 30*event.xGravity
+char.x = 5*event.xGravity
 
 end
 -- Arrow Rotation Function
@@ -279,6 +283,20 @@ local function onBallCollide(event)
 		end
 	end
 end
+
+--reset game
+local function resetGame()
+	display.remove(char) char=nil
+	char = display.newImage("images/char.png")
+	char.x = 300 char.y = screenH -90
+	physics.addBody( char, physicsData:get("char") )
+	game:insert( char )
+	char.myName = "char"
+end
+
+local resetButton = display.newRect(0, 0, 200, 50)
+resetButton:setFillColor(255,0,0)
+resetButton:addEventListener("tap", resetGame)    
 
 
 -- Runtimes ETC

@@ -5,7 +5,7 @@ new = function()
 
 	print("Menu")
 	local localGroup = display.newGroup()
-	
+		
 	playButton = display.newRect(0,0,200,50)
 	playButton:setReferencePoint(display.CenterReferencePoint);
 	playButton.x = screenW/2 playButton.y = screenH/2

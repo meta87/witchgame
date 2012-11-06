@@ -10,4 +10,11 @@ local function main()
 	return true
 end
 
+function changeScene(e)
+		if(e.phase=="ended") then
+		  Runtime._functionListeners = nil
+		  director:changeScene(e.target.scene)
+	    end
+	end
+
 main()

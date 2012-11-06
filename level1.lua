@@ -233,7 +233,7 @@ local function onBallCollide(event)
 	end
 end
 
---reset game
+--reset level
 local function resetGame()
 	display.remove(char) char=nil
 	display.remove(balls) balls=nil
@@ -243,18 +243,20 @@ local function resetGame()
 	game:insert( char )
 	char.myName = "char"
 end
+
 local resetButton = display.newRect(0, 0, 200, 50)
 resetButton:setFillColor(255,0,0)
-resetButton:addEventListener("tap", resetGame)    
+resetButton.scene = "menu"
+resetButton:addEventListener("touch", changeScene)    
 
 -- Runtimes ETC
 powerGauge:addEventListener("tap", stopButton)
+arrow:addEventListener("tap", arrowSelect)
 Runtime:addEventListener("enterFrame", charMove)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)
 Runtime:addEventListener("enterFrame", arrowRotate)
-arrow:addEventListener("tap", arrowSelect)
 Runtime:addEventListener ("accelerometer", onTilt);
 
 return localGroup

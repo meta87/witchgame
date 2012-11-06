@@ -1,7 +1,11 @@
+module(..., package.seeall)
 display.setStatusBar( display.HiddenStatusBar )
 
-local director = require( "director" )
+new = function()
 
+local localGroup = display.newGroup()
+
+local director = require( "director" )
 local loqsprite = require('loq_sprite')
 
 --require("loq_profiler").createProfiler()
@@ -13,20 +17,21 @@ physics.start();
 
 local physicsData = (require "shapedefs").physicsData() -- This is physicseditor
 
-local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local game = display.newGroup();
 local balls = display.newGroup();
 game:insert(balls)
+localGroup:insert(game)
 game.x = 0
 
 local background = display.newImage("images/background.png")
+localGroup:insert(background)
 background:toBack()
 
 -- Character Object
 local char = display.newImage("images/char.png")
 char.x = 300 char.y = screenH -90
 physics.addBody( char, physicsData:get("char") )
-game:insert( char )
+game:insert(char)
 char.myName = "char"
 
 -- Ball Object
@@ -251,3 +256,7 @@ Runtime:addEventListener("touch", ballShootOnTouch)
 Runtime:addEventListener("enterFrame", arrowRotate)
 arrow:addEventListener("tap", arrowSelect)
 Runtime:addEventListener ("accelerometer", onTilt);
+
+return localGroup
+
+end

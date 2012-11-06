@@ -5,3 +5,5 @@ You can shoot balls as fast as you want, but they only regen (energy) at a certa
 Use the physics, when a player is knocked over by the ball they win
 
 use multitouch for secondary move
+
+Multitouch, makes a wall in between the two fingers

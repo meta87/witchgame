@@ -101,11 +101,11 @@ game:insert( floor )
 
 local tiltMotionX = 0
 local function onTilt(event)
-tiltMotionX = 30*event.xGravity
+tiltMotionX = 30*event.yGravity
 end
 
 local function charMove(event)
-char.x = char.x + tiltMotionX
+char.x = char.x - tiltMotionX
 end
 
 

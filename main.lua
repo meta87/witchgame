@@ -183,25 +183,37 @@ end
 --  On touch ball shoot function
 local function ballShootOnTouch(event)
 	if (event.phase == "began") then
-		display.getCurrentStage():setFocus(event.target)        
-		dx=event.x-char.x
-	    dy=event.y-char.y
-		distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
+		local dx=event.x-char.x-game.x
+	    local dy=event.y-char.y-game.y
+		local distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
+		local forceMagnitude = distance / 50
+		
 		ball2 = display.newImage("images/ball.png")
 		physics.addBody( ball2, physicsData:get("ball") )
 		ball2.myName = "ball2"
 		game:insert( ball2 )
-	
-		ball2.x = event.x - game.x ball2.y = event.y
-	--[[touchSlope=event.y-char.y/event.x-char.y
-		print (touchSlope,"slope")
-		local angle = math.rad(touchSlope)
-		forceMagnitude = distance / 10
+		
+		-- Shoots ball from left or right of character depending on touch location
+		if event.x-game.x < char.x  then
+			ball2.x = char.x ball2.y = char.y - 100
+			print ("neg")
+		else 
+			ball2.x = char.x ball2.y = char.y - 100
+			print ("pos")
+		end
+		
+		local deltaX = event.x - char.x - game.x
+		local deltaY = event.y - char.y - game.x
+		local angle = math.atan2(deltaY, deltaX)
+--		local xDist = event.x-char.x ; local yDist = event.y-char.y
+--        local angleBetween = math.deg( math.atan( yDist/xDist ) )
+ --       if ( event.x < char.x ) then angleBetween = angleBetween+90 else angleBetween = angleBetween-90 end
 		forceX = math.cos(angle)*forceMagnitude 
 		forceY = math.sin(angle)*forceMagnitude
-		ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
-		print (distance)
-	]]	
+		ball2:applyLinearImpulse( forceX, forceY, ball2.x, ball2.y )
+		print (distance,"Distance")
+		print (angle,"Angle Between")
+	
     end
 	return true
 end

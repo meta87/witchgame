@@ -3,3 +3,5 @@ Ideas for Witch Game
 You can shoot balls as fast as you want, but they only regen (energy) at a certain pace.
 
 Use the physics, when a player is knocked over by the ball they win
+
+use multitouch for secondary move

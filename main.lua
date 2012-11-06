@@ -2,9 +2,8 @@ display.setStatusBar( display.HiddenStatusBar )
 
 local loqsprite = require('loq_sprite')
 --require("loq_profiler").createProfiler()
-
-local function createProfiler(	_onTop,_collect	)
-end
+--local function createProfiler(	_onTop,_collect	)
+--end
 
 local physics = require "physics"
 physics.start(); 
@@ -13,6 +12,8 @@ local physicsData = (require "shapedefs").physicsData() -- This is physicseditor
 
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local game = display.newGroup();
+local balls = display.newGroup();
+game:insert(balls)
 game.x = 0
 
 local background = display.newImage("images/background.png")
@@ -89,7 +90,7 @@ powerGauge.yScale = 200
 
 -- map
 
-local leftwall = display.newRect( 0 , -1000, 20, 1000 + screenH )
+local leftwall = display.newRect( 0 , -1000, 50, 1000 + screenH )
 physics.addBody (leftwall, "static", { friction =0.3,})
 game:insert( leftwall )
 
@@ -154,11 +155,16 @@ local function ballShootOnTouch(event)
 	    local dy=event.y-char.y-game.y
 		local distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
 		local forceMagnitude = distance / 50
-		
+		print (dx,dy)
 		ball2 = display.newImage("images/ball.png")
 		physics.addBody( ball2, physicsData:get("ball") )
 		ball2.myName = "ball2"
-		game:insert( ball2 )
+		if  balls == nil then
+		balls = display.newGroup();
+		game:insert(balls)
+		end
+		balls:insert( ball2 )
+		
 		
 		-- Shoots ball from left or right of character depending on touch location
 		if event.x-game.x < char.x  then
@@ -250,6 +256,7 @@ end
 --reset game
 local function resetGame()
 	display.remove(char) char=nil
+	display.remove(balls) balls=nil
 	char = display.newImage("images/char.png")
 	char.x = 300 char.y = screenH -90
 	physics.addBody( char, physicsData:get("char") )

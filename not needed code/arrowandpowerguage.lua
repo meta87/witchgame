@@ -1,3 +1,7 @@
+--require("loq_profiler").createProfiler()
+--local function createProfiler(	_onTop,_collect	)
+--end
+local loqsprite = require('loq_sprite')
 -- ball toss gui
 local arrow = display.newImage("images/arrow.png")
 arrow.y = screenH - 50; arrow.x = 200

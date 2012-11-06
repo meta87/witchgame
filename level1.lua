@@ -5,13 +5,7 @@ system.activate("multitouch")
 new = function()
 
 local localGroup = display.newGroup()
-
 local director = require( "director" )
-local loqsprite = require('loq_sprite')
-
---require("loq_profiler").createProfiler()
---local function createProfiler(	_onTop,_collect	)
---end
 
 local physics = require "physics"
 physics.start(); 
@@ -34,6 +28,7 @@ char.x = 300 char.y = screenH -90
 physics.addBody( char, physicsData:get("char") )
 game:insert(char)
 char.myName = "char"
+char.isFixedRotation = true
 
 -- Ball Object
 local function ballcreate()
@@ -73,9 +68,12 @@ char.x = char.x - tiltMotionX
 end
 
 -- Character Jump Function
-local function onMultitouch(event)
-	char:applyLinearImpulse( 100, char.y )
+local function charJump(event)
+	char:applyLinearImpulse( 0, -100, char.x, char.y )
 end
+
+char:addEventListener("touch", charJump)    
+
 
 --  On touch ball shoot function
 local function ballShootOnTouch(event)
@@ -97,10 +95,10 @@ local function ballShootOnTouch(event)
 		--if statements for controlling which side of char the ball shoots from
 		if (event.x-game.x >= char.x) then
 			print ("x greater", event.x)
-		  ball2.x = char.x + 40
+		  ball2.x = char.x + 60
 		else
 		print ("x less", event.x)
-		  ball2.x = char.x-40
+		  ball2.x = char.x-60
 		end
 		--controlling y axis of ball placement
 		if (event.y <= char.y-80) then --80 is to compensate for chars center reference point
@@ -124,52 +122,37 @@ local function ballShootOnTouch(event)
 	return true
 end
 
-
-
--- Move Camera Function (Switch from character to ball)
-local function moveCamera() -- Camera switches from tracking char, then ball when tossed
---	game.y = -ball.y + screenH /2
-	if ballShot == 0 then
+-- Move Camera Function 
+local function moveCamera() 
 	game.x = -char.x + screenW /2
-	else if ballShot == 1 then
-	game.x = -ball.x + screenW /2
-	end end
 end
 
 -- Detect Ball Collision Functions
 local function onBallCollide(event)
 	if ( event.phase == "ended") then
-		if event.object1.myName == "ball2" and event.object2.myName == "enemy" then
-			timer.performWithDelay(500, event.object2:removeSelf())
-			print ("touched")
+		if event.object1.myName == "ball2" then
+			event.object1:removeSelf()
+		else if event.object2.myName == "ball2" then
+			event.object2:removeSelf()
+		end
 		end
 	end
 end
 
 --reset level
-local function resetGame()
-	display.remove(char) char=nil
-	display.remove(balls) balls=nil
-	char = display.newImage("images/char.png")
-	char.x = 300 char.y = screenH -90
-	physics.addBody( char, physicsData:get("char") )
-	game:insert( char )
-	char.myName = "char"
-end
-
 local resetButton = display.newRect(0, 0, 200, 50)
 resetButton:setFillColor(255,0,0)
 resetButton.scene = "menu"
 resetButton:addEventListener("touch", changeScene)    
 
--- Runtimes ETC
 
+-- Runtimes ETC
 Runtime:addEventListener("enterFrame", charMove)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)
-
 Runtime:addEventListener ("accelerometer", onTilt);
+
 
 return localGroup
 

@@ -65,6 +65,7 @@ end
 
 local function charMove(event)
 char.x = char.x - tiltMotionX
+print (event.yGravity)
 end
 
 -- Character Jump Function

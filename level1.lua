@@ -157,14 +157,22 @@ local function ballShootOnTouch(event)
 		game:insert(balls)
 		end
 		balls:insert( ball2 )
-		-- Shoots ball from left or right of character depending on touch location
-		if event.x-game.x < char.x  then
-		  ball2.x = char.x ball2.y = char.y - 100
-		  print ("neg")
-		  else 
-		    ball2.x = char.x ball2.y = char.y - 100
-		    print ("pos")
-		end		
+		
+		--if statements for controlling which side of char the ball shoots from
+		if (event.x > char.x-game.x) then
+		  ball2.x = char.x + 40
+		else
+		  ball2.x = char.x-40
+		end
+		if (event.y <= char.y-game.y) then
+		  ball2.y = char.y - 80
+		  print ("greater", event.y)
+		else
+		  ball2.y = event.y - game.y
+		  print ("less", event.y)
+		end
+		
+		--math formula for figuring out radians of touch compared to char location
 		local deltaX = event.x - char.x - game.x
 		local deltaY = event.y - char.y - game.x
 		local angle = math.atan2(deltaY, deltaX)

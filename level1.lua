@@ -159,22 +159,25 @@ local function ballShootOnTouch(event)
 		balls:insert( ball2 )
 		
 		--if statements for controlling which side of char the ball shoots from
-		if (event.x > char.x-game.x) then
+		if (event.x-game.x >= char.x) then
+			print ("x greater", event.x)
 		  ball2.x = char.x + 40
 		else
+		print ("x less", event.x)
 		  ball2.x = char.x-40
 		end
-		if (event.y <= char.y-game.y) then
+		--controlling y axis of ball placement
+		if (event.y <= char.y-80) then --80 is to compensate for chars center reference point
 		  ball2.y = char.y - 80
-		  print ("greater", event.y)
+		  print ("y greater", event.y)
 		else
 		  ball2.y = event.y - game.y
-		  print ("less", event.y)
+		  print ("y less", event.y)
 		end
 		
 		--math formula for figuring out radians of touch compared to char location
-		local deltaX = event.x - char.x - game.x
-		local deltaY = event.y - char.y - game.x
+		local deltaX = event.x - char.x - game.x -- the game.x is to compensate for camera movement.
+		local deltaY = event.y - char.y - 40 -- the 40 is to compensate for char's reference point (center)
 		local angle = math.atan2(deltaY, deltaX)
 		forceX = math.cos(angle)*forceMagnitude 
 		forceY = math.sin(angle)*forceMagnitude

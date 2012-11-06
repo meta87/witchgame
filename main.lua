@@ -183,15 +183,16 @@ end
 --  On touch ball shoot function
 local function ballShootOnTouch(event)
 	if (event.phase == "began") then
-        --display.getCurrentStage():setFocus( self )
-        dx=event.x-char.x
+		display.getCurrentStage():setFocus(event.target)        
+		dx=event.x-char.x
 	    dy=event.y-char.y
 		distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
 		ball2 = display.newImage("images/ball.png")
 		physics.addBody( ball2, physicsData:get("ball") )
 		ball2.myName = "ball2"
 		game:insert( ball2 )
-		ball2.x = event.x event.y = localy
+	
+		ball2.x = event.x - game.x ball2.y = event.y
 	--[[touchSlope=event.y-char.y/event.x-char.y
 		print (touchSlope,"slope")
 		local angle = math.rad(touchSlope)
@@ -276,4 +277,4 @@ Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)
 Runtime:addEventListener("enterFrame", arrowRotate)
 arrow:addEventListener("tap", arrowSelect)
-Runtime:aEventListener ("accelerometer", onTilt);
+Runtime:addEventListener ("accelerometer", onTilt);

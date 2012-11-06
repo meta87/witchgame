@@ -1,5 +1,6 @@
 module(..., package.seeall)
 display.setStatusBar( display.HiddenStatusBar )
+system.activate("multitouch")
 
 new = function()
 
@@ -46,46 +47,11 @@ local function ballcreate()
 end
 
 -- enemy object
-local enemy = display.newRect(2500, 200, 50, 250)
+local enemy = display.newRect(500, 200, 50, 250)
 enemy:setFillColor(255,0,0)
 physics.addBody (enemy, { friction =0.3, density =1.1})
 game:insert (enemy)
 enemy.myName = "enemy"
-
-local enemy2 = display.newRect(2500, 0, 50, 250)
-enemy2:setFillColor(255,255,0)
-physics.addBody (enemy2, { friction =0.3, density =0.4})
-game:insert (enemy2)
-
--- Buildings
-local function populate()
-	local spriteFactory = loqsprite.newFactory('sheet')
-	local buildingTable = {}
-	local buildingXLocation = 800
-
-	for i = 1,100 do
-	local ranBuild = math.random(6)
-	local building = spriteFactory:newSpriteGroup("building"..ranBuild)
-	buildingTable[i] = building
-	buildingTable[i].x = buildingXLocation
-	buildingXLocation = buildingXLocation + buildingTable[i].contentWidth + 20
-	buildingTable[i].y= screenH - buildingTable[i].contentHeight
-	buildingTable[i]:addPhysics(physics, "static", { friction =0.3,})
-	buildingTable[i].myName = "building"
-
-	game:insert (buildingTable[i])
-	end
-end
-populate()
-
--- ball toss gui
-local arrow = display.newImage("images/arrow.png")
-arrow.y = screenH - 50; arrow.x = 200
-arrow:setReferencePoint (display.BottomLeftReferencePoint)
-
-local powerGauge = display.newRect (40, screenH - 40, 50, 1)
-powerGauge:setReferencePoint (display.BottomCenterReferencePoint)
-powerGauge.yScale = 200
 
 -- map
 local leftwall = display.newRect( 0 , -1000, 50, 1000 + screenH )
@@ -106,39 +72,9 @@ local function charMove(event)
 char.x = char.x - tiltMotionX
 end
 
--- Arrow Rotation Function
-rotationDirection = 1
-arrowStop = 0
-local function arrowRotate() 
-	if (arrow.rotation < 90 and arrowStop==0) then
-	arrow.rotation = arrow.rotation - 2 * rotationDirection
-	end
-	if (arrow.rotation == -90 and arrowStop==0) then
-	rotationDirection = -1
-	else if (arrow.rotation == 0 and arrowStop==0) then
-	rotationDirection = 1
-	end end
-end
-
--- Ball Shoot uses arrow Touch and stopButton Functions
-local ballShot = 0
-local ball
-function ballShoot()
-	if (powerGaugeStop == 1 and arrowStop == 1 and ballShot == 0) then
-	print (forceY)
-	ball = display.newImage("images/ball.png")
-	ball.x = char.x + 40 ball.y = char.y + 40
-	physics.addBody( ball, physicsData:get("ball") )
-	game:insert( ball )
-	ball.myName = "ball"
-	local angle = math.rad(arrow.rotation)
-	forceMagnitude = powerGaugeNum
-	forceX = math.cos(angle)*forceMagnitude 
-	forceY = math.sin(angle)*forceMagnitude
-	ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
-	ballShot = 1
-	end
-	return true
+-- Character Jump Function
+local function onMultitouch(event)
+	char:applyLinearImpulse( 100, char.y )
 end
 
 --  On touch ball shoot function
@@ -188,18 +124,7 @@ local function ballShootOnTouch(event)
 	return true
 end
 
--- Arrow Touch Function
-powerGaugeNum = 0
-function arrowSelect(event)
-	arrowStop = 1
-    arrow = event.target 
-	arrowAngle = arrow.rotation
-	print (arrowAngle)
-	if (arrowStop == 1) then
-	ballShoot()
-	end
-	return true
-end
+
 
 -- Move Camera Function (Switch from character to ball)
 local function moveCamera() -- Camera switches from tracking char, then ball when tossed
@@ -211,33 +136,10 @@ local function moveCamera() -- Camera switches from tracking char, then ball whe
 	end end
 end
 
--- Power Gauge Function
-local powerGaugeMove
-local powerGaugeMoveBack
-powerGaugeMoveBack = function()
-	moveUp = transition.to( powerGauge, { time=1000, yScale=200, onComplete=powerGaugeMove } )
-end
-powerGaugeMove = function()
-	moveDown = transition.to( powerGauge, { time=1000, yScale=1, onComplete=powerGaugeMoveBack } )
-end
-powerGaugeMove()
-powerGaugeStop = 0
-local function stopButton(event)
-	powerGaugeStop = 1
-	local powerGauge = event.target
-	powerGaugeNum = powerGauge.yScale /12
-	print ( powerGauge.yScale )
-	transition.cancel(moveDown)
-	transition.cancel(moveUp)
-	if (arrowStop == 1) then
-	ballShoot()
-	end
-end
-
 -- Detect Ball Collision Functions
 local function onBallCollide(event)
 	if ( event.phase == "ended") then
-		if event.object1.myName == "ball" and event.object2.myName == "building" then
+		if event.object1.myName == "ball2" and event.object2.myName == "enemy" then
 			timer.performWithDelay(500, event.object2:removeSelf())
 			print ("touched")
 		end
@@ -261,13 +163,12 @@ resetButton.scene = "menu"
 resetButton:addEventListener("touch", changeScene)    
 
 -- Runtimes ETC
-powerGauge:addEventListener("tap", stopButton)
-arrow:addEventListener("tap", arrowSelect)
+
 Runtime:addEventListener("enterFrame", charMove)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)
-Runtime:addEventListener("enterFrame", arrowRotate)
+
 Runtime:addEventListener ("accelerometer", onTilt);
 
 return localGroup

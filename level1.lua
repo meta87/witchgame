@@ -44,6 +44,7 @@ end
 -- enemy object
 local enemy = display.newRect(500, 200, 50, 250)
 enemy:setFillColor(255,0,0)
+enemy.status = "ballPops"
 physics.addBody (enemy, { friction =0.3, density =1.1})
 game:insert (enemy)
 enemy.myName = "enemy"
@@ -65,7 +66,6 @@ end
 
 local function charMove(event)
 char.x = char.x - tiltMotionX
-print (event.yGravity)
 end
 
 -- Character Jump Function
@@ -75,7 +75,6 @@ end
 
 char:addEventListener("touch", charJump)    
 
-
 --  On touch ball shoot function
 local function ballShootOnTouch(event)
 	if (event.phase == "began") then
@@ -84,29 +83,30 @@ local function ballShootOnTouch(event)
 		local distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
 		local forceMagnitude = distance / 50
 		print (dx,dy)
-		ball2 = display.newImage("images/ball.png")
-		physics.addBody( ball2, physicsData:get("ball") )
-		ball2.myName = "ball2"
+		ball = display.newImage("images/ball.png")
+		ball.status = "ballPops"
+		physics.addBody( ball, physicsData:get("ball") )
+		ball.myName = "ball"
 		if  balls == nil then
 		balls = display.newGroup();
-		game:insert(balls)
+		game:insert(ball)
 		end
-		balls:insert( ball2 )
+		balls:insert(ball)
 		
 		--if statements for controlling which side of char the ball shoots from
 		if (event.x-game.x >= char.x) then
 			print ("x greater", event.x)
-		  ball2.x = char.x + 60
+		  ball.x = char.x + 60
 		else
 		print ("x less", event.x)
-		  ball2.x = char.x-60
+		  ball.x = char.x-60
 		end
 		--controlling y axis of ball placement
 		if (event.y <= char.y-80) then --80 is to compensate for chars center reference point
-		  ball2.y = char.y - 80
+		  ball.y = char.y - 80
 		  print ("y greater", event.y)
 		else
-		  ball2.y = event.y - game.y
+		  ball.y = event.y - game.y
 		  print ("y less", event.y)
 		end
 		
@@ -116,7 +116,7 @@ local function ballShootOnTouch(event)
 		local angle = math.atan2(deltaY, deltaX)
 		forceX = math.cos(angle)*forceMagnitude 
 		forceY = math.sin(angle)*forceMagnitude
-		ball2:applyLinearImpulse( forceX, forceY, ball2.x, ball2.y )
+		ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
 		print (distance,"Distance")
 		print (angle,"Angle Between")
     end
@@ -131,9 +131,9 @@ end
 -- Detect Ball Collision Functions
 local function onBallCollide(event)
 	if ( event.phase == "ended") then
-		if event.object1.myName == "ball2" then
+		if event.object1.myName == "ball" and event.object2.status == "ballPops" then
 			event.object1:removeSelf()
-		else if event.object2.myName == "ball2" then
+		else if event.object2.myName == "ball" and event.object1.status == "ballPops" then
 			event.object2:removeSelf()
 		end
 		end

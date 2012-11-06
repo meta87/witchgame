@@ -97,56 +97,19 @@ local floor = display.newRect( 0, screenH -20 , 5000, 50 )
 physics.addBody (floor, "static", { friction =0.3,})
 game:insert( floor )
 
--- block tower 
+-- Character move Function
 
-local dispObj_1 = display.newImageRect( "images/building.png", 44, 44 )
-dispObj_1.x = 2722
-dispObj_1.y = 174
-game:insert (dispObj_1)
-physics.addBody( dispObj_1, { density=1, friction=0.3, bounce=0.2 } )
-
-
-local dispObj_2 = display.newImageRect( "images/building.png", 44, 44 )
-dispObj_2.x = 2782
-dispObj_2.y = 222
-game:insert (dispObj_2)
-physics.addBody( dispObj_2, { density=1, friction=0.3, bounce=0.2 } )
-
-
-local dispObj_3 = display.newImageRect( "images/building.png", 44, 44 )
-dispObj_3.x = 2780
-dispObj_3.y = 180
-game:insert (dispObj_3)
-physics.addBody( dispObj_3, { density=1, friction=0.3, bounce=0.2 } )
-
-
-local dispObj_4 = display.newImageRect( "images/building.png", 44, 44 )
-dispObj_4.x = 2780
-dispObj_4.y = 264
-game:insert (dispObj_4)
-physics.addBody( dispObj_4, { density=1, friction=0.3, bounce=0.2 } )
-
-
-local dispObj_5 = display.newImageRect( "images/building.png", 44, 44 )
-dispObj_5.x = 2720
-dispObj_5.y = 214
-game:insert (dispObj_5)
-physics.addBody( dispObj_5, { density=1, friction=0.3, bounce=0.2 } )
-
-
-local dispObj_6 = display.newImageRect( "images/building.png", 44, 44 )
-dispObj_6.x = 2720
-dispObj_6.y = 254
-game:insert (dispObj_6)
-physics.addBody( dispObj_6, { density=1, friction=0.3, bounce=0.2 } )
-
--- Char move Function
-
+local tiltMotionX = 0
 local function onTilt(event)
- 
-char.x = 5*event.xGravity
-
+tiltMotionX = 30*event.xGravity
 end
+
+local function charMove(event)
+char.x = char.x + tiltMotionX
+end
+
+
+
 -- Arrow Rotation Function
 rotationDirection = 1
 arrowStop = 0
@@ -235,7 +198,7 @@ function arrowSelect(event)
 	return true
 end
 
--- Move Camera Function
+-- Move Camera Function (Switch from character to ball)
 local function moveCamera() -- Camera switches from tracking char, then ball when tossed
 --	game.y = -ball.y + screenH /2
 	if ballShot == 0 then
@@ -302,6 +265,7 @@ resetButton:addEventListener("tap", resetGame)
 -- Runtimes ETC
 
 powerGauge:addEventListener("tap", stopButton)
+Runtime:addEventListener("enterFrame", charMove)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)

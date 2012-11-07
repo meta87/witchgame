@@ -44,7 +44,8 @@ end
 -- enemy object
 local enemy = display.newRect(500, 200, 50, 250)
 enemy:setFillColor(255,0,0)
-enemy.status = "ballPops"
+enemy.status = "ballPops" -- ballPops means ball is removed when colliding with this object
+enemy.health = 3 -- each ball collision is 1 
 physics.addBody (enemy, { friction =0.3, density =1.1})
 game:insert (enemy)
 enemy.myName = "enemy"
@@ -61,8 +62,33 @@ game:insert( floor )
 -- Character move Function
 local tiltMotionX = 0
 local function onTilt(event)
-tiltMotionX = 30*event.yGravity
+	if event.yGravity <=.10 then
+		print (event.yGravity,"ttt")
+		tiltMotionX = 10
+	else if event.yGravity >=-.10 then
+		tiltMotionX = -10
+		print (event.yGravity,"aaa")
+
+	end end
+	
 end
+
+local function updateAccel()
+accelData.text = gravity
+print("Updated", accelData)
+end
+	accelData = display.newText("data",200,200,"Arial",40)
+	accelData:setTextColor(0,0,0)
+local function printAccel(event)
+
+	gravity = event.yGravity
+	timer.performWithDelay(5, updateAccel())
+	print (event.yGravity,"WHAHAHA")
+end
+
+
+Runtime:addEventListener ("accelerometer", printAccel);
+
 
 local function charMove(event)
 char.x = char.x - tiltMotionX
@@ -96,7 +122,7 @@ local function ballShootOnTouch(event)
 		--if statements for controlling which side of char the ball shoots from
 		if (event.x-game.x >= char.x) then
 			print ("x greater", event.x)
-		  ball.x = char.x + 60
+			ball.x = char.x + 60
 		else
 		print ("x less", event.x)
 		  ball.x = char.x-60
@@ -106,7 +132,7 @@ local function ballShootOnTouch(event)
 		  ball.y = char.y - 80
 		  print ("y greater", event.y)
 		else
-		  ball.y = event.y - game.y
+		  ball.y = char.y - game.y
 		  print ("y less", event.y)
 		end
 		
@@ -131,6 +157,21 @@ end
 -- Detect Ball Collision Functions
 local function onBallCollide(event)
 	if ( event.phase == "ended") then
+		local obj1 = event.object1
+		local obj2 = event.object2
+		if (obj1.health ~= nil) then
+			obj1.health = obj1.health - 1
+			print "Hit!"
+		if (obj1.health == 0) then
+			obj1:removeSelf()
+		end end
+		if (obj2.health ~= nil) then
+			obj2.health = obj2.health - 1
+			print "Hit!"
+		if (obj2.health == 0) then
+			obj2:removeSelf()
+		end end
+		
 		if event.object1.myName == "ball" and event.object2.status == "ballPops" then
 			event.object1:removeSelf()
 		else if event.object2.myName == "ball" and event.object1.status == "ballPops" then

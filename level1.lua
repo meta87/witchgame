@@ -32,13 +32,11 @@ char.isFixedRotation = true
 
 -- Ball Object
 local function ballcreate()
-
-	local ball = display.newImage("images/ball.png")
-	ball.x = char.x + 40 ball.y = char.y + 40
-	physics.addBody( ball, physicsData:get("ball") )
-	game:insert( ball )
-	ball.myName = "ball"
-
+local ball = display.newImage("images/ball.png")
+ball.x = char.x + 40 ball.y = char.y + 40
+physics.addBody( ball, physicsData:get("ball") )
+game:insert( ball )
+ball.myName = "ball"
 end
 
 -- enemy object
@@ -49,6 +47,10 @@ enemy.health = 3 -- each ball collision is 1
 physics.addBody (enemy, { friction =0.3, density =1.1})
 game:insert (enemy)
 enemy.myName = "enemy"
+
+-- enemy ai
+local function enemyPace ()
+end
 
 -- map
 local leftwall = display.newRect( 0 , -1000, 50, 1000 + screenH )
@@ -97,18 +99,25 @@ end
 -- Character Jump Function
 local function charJump(event)
 	char:applyLinearImpulse( 0, -100, char.x, char.y )
+	return true
 end
 
 char:addEventListener("touch", charJump)    
 
+-- Distance Function
+local function distance(dx,dy)
+	local distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
+	return distance
+end
+
 --  On touch ball shoot function
 local function ballShootOnTouch(event)
-	if (event.phase == "began") then
+	if (event.phase == "began" and charJump ~= true) then
+	print (event.target)
 		local dx=event.x-char.x-game.x
 	    local dy=event.y-char.y-game.y
-		local distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
-		local forceMagnitude = distance / 50
-		print (dx,dy)
+		local touchDistance = distance(dx,dy)
+		local forceMagnitude = touchDistance / 50
 		ball = display.newImage("images/ball.png")
 		ball.status = "ballPops"
 		physics.addBody( ball, physicsData:get("ball") )
@@ -121,19 +130,15 @@ local function ballShootOnTouch(event)
 		
 		--if statements for controlling which side of char the ball shoots from
 		if (event.x-game.x >= char.x) then
-			print ("x greater", event.x)
 			ball.x = char.x + 60
 		else
-		print ("x less", event.x)
 		  ball.x = char.x-60
 		end
 		--controlling y axis of ball placement
 		if (event.y <= char.y-80) then --80 is to compensate for chars center reference point
 		  ball.y = char.y - 80
-		  print ("y greater", event.y)
 		else
 		  ball.y = char.y - game.y
-		  print ("y less", event.y)
 		end
 		
 		--math formula for figuring out radians of touch compared to char location
@@ -143,8 +148,6 @@ local function ballShootOnTouch(event)
 		forceX = math.cos(angle)*forceMagnitude 
 		forceY = math.sin(angle)*forceMagnitude
 		ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
-		print (distance,"Distance")
-		print (angle,"Angle Between")
     end
 	return true
 end

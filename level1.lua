@@ -59,49 +59,59 @@ game:insert( leftwall )
 
 local floor = display.newRect( 0, screenH -20 , 5000, 50 )
 physics.addBody (floor, "static", { friction =0.3,})
+floor.myName = "floor"
 game:insert( floor )
 
 -- Character move Function
 local tiltMotionX = 0
 local function onTilt(event)
 	if event.yGravity <=.10 then
-		print (event.yGravity,"ttt")
 		tiltMotionX = 10
 	else if event.yGravity >=-.10 then
 		tiltMotionX = -10
-		print (event.yGravity,"aaa")
-
-	end end
-	
+	end end	
 end
-
+-- This is just to display the accelerometer text on screen
 local function updateAccel()
 accelData.text = gravity
 print("Updated", accelData)
 end
-	accelData = display.newText("data",200,200,"Arial",40)
-	accelData:setTextColor(0,0,0)
+accelData = display.newText("data",200,200,"Arial",40)
+accelData:setTextColor(0,0,0)
 local function printAccel(event)
-
 	gravity = event.yGravity
 	timer.performWithDelay(5, updateAccel())
 	print (event.yGravity,"WHAHAHA")
 end
-
-
 Runtime:addEventListener ("accelerometer", printAccel);
 
-
 local function charMove(event)
-char.x = char.x - tiltMotionX
+char:setLinearVelocity(tiltMotionX, 0)
 end
 
 -- Character Jump Function
+charJumping = 0
 local function charJump(event)
-	char:applyLinearImpulse( 0, -100, char.x, char.y )
+	if charJumping == 0 then
+	char:setLinearVelocity( 0,0 )
+	timer.performWithDelay(10, char:applyLinearImpulse( 0, -200, char.x, char.y ))
+	charJumping = 1
+	end
 	return true
 end
+Runtime:addEventListener("enterFrame", charMove)
 
+local function jumpTest(event)
+        if (event.phase == "ended") then
+                if (event.other.myName == "floor") then
+				charJumping = 0
+				print ("touching Ground")
+				return
+                end
+        end
+end
+
+char:addEventListener("collision", jumpTest)
 char:addEventListener("touch", charJump)    
 
 -- Distance Function
@@ -147,6 +157,8 @@ local function ballShootOnTouch(event)
 		local angle = math.atan2(deltaY, deltaX)
 		forceX = math.cos(angle)*forceMagnitude 
 		forceY = math.sin(angle)*forceMagnitude
+		char:setLinearVelocity( 0,0 )
+
 		ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
     end
 	return true

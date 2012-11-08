@@ -63,14 +63,12 @@ floor.myName = "floor"
 game:insert( floor )
 
 --Character move Function
-local tiltMotionX = 0
 local function onTilt(event)
-	if event.yGravity <=.10 then
-	  tiltMotionX = 50
-	else if event.yGravity >=-.10 then
-	  tiltMotionX = -50
-	end end	
-	char:setLinearVelocity(tiltMotionX)
+	if event.yGravity >= .2 then
+	char:setLinearVelocity(event.yGravity*-400)
+	else if event.yGravity <= -.2 then
+	char:setLinearVelocity(event.yGravity*-400)
+	end end
 end
 
 --This is just to display the accelerometer text on screen
@@ -87,17 +85,11 @@ print (event.yGravity,"WHAHAHA")
 end
 Runtime:addEventListener ("accelerometer", printAccel);
 
---local function charMove(event)
---char.x = char.x - tiltMotionX
---end
---Runtime:addEventListener("accelerometer", charMove)
-
-
 -- Character Jump Function
 charJumping = 0
 local function charJump(event)
 if charJumping == 0 then
-	char:setLinearVelocity( 0,0 )
+	--char:setLinearVelocity( 0,0 )
 	timer.performWithDelay(10, char:applyLinearImpulse( 0, -200, char.x, char.y ))
 	charJumping = 1
 end
@@ -206,7 +198,6 @@ resetButton:addEventListener("touch", changeScene)
 
 
 -- Runtimes ETC
---Runtime:addEventListener("enterFrame", charMove)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)

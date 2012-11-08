@@ -62,30 +62,30 @@ physics.addBody (floor, "static", { friction =0.3,})
 floor.myName = "floor"
 game:insert( floor )
 
--- Character move Function
+--Character move Function
 local tiltMotionX = 0
 local function onTilt(event)
 	if event.yGravity <=.10 then
-	  tiltMotionX = 10
+	  tiltMotionX = 50
 	else if event.yGravity >=-.10 then
-	  tiltMotionX = -10
+	  tiltMotionX = -50
 	end end	
-	--char:setLinearVelocity(tiltMotionX, 0)
+	char:setLinearVelocity(tiltMotionX)
 end
 
--- This is just to display the accelerometer text on screen
--- local function updateAccel()
--- accelData.text = gravity
--- print("Updated", accelData)
--- end
--- accelData = display.newText("data",200,200,"Arial",40)
--- accelData:setTextColor(0,0,0)
--- local function printAccel(event)
--- gravity = event.yGravity
--- timer.performWithDelay(5, updateAccel())
--- print (event.yGravity,"WHAHAHA")
--- end
--- Runtime:addEventListener ("accelerometer", printAccel);
+--This is just to display the accelerometer text on screen
+local function updateAccel()
+accelData.text = gravity
+print("Updated", accelData)
+end
+accelData = display.newText("data",200,200,"Arial",40)
+accelData:setTextColor(0,0,0)
+local function printAccel(event)
+gravity = event.yGravity
+timer.performWithDelay(5, updateAccel())
+print (event.yGravity,"WHAHAHA")
+end
+Runtime:addEventListener ("accelerometer", printAccel);
 
 --local function charMove(event)
 --char.x = char.x - tiltMotionX
@@ -206,7 +206,7 @@ resetButton:addEventListener("touch", changeScene)
 
 
 -- Runtimes ETC
-Runtime:addEventListener("enterFrame", charMove)
+--Runtime:addEventListener("enterFrame", charMove)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)

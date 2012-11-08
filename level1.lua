@@ -64,10 +64,12 @@ game:insert( floor )
 
 --Character move Function
 local function onTilt(event)
-	if event.yGravity >= .2 then
-	char:setLinearVelocity(event.yGravity*-400)
-	else if event.yGravity <= -.2 then
-	char:setLinearVelocity(event.yGravity*-400)
+	if event.yGravity >= .1 then
+	local vx, vy = char:getLinearVelocity()
+	char:setLinearVelocity(vx+event.yGravity*-800)
+	else if event.yGravity <= -.1 then
+	local vx, vy = char:getLinearVelocity()
+	char:setLinearVelocity(vx+event.yGravity*-800)
 	end end
 end
 

@@ -9,34 +9,6 @@ local remote = require("remote")
 -- Start The Remote On Port 8080
 remote.startServer( "8080" )
 
--- Start The Compass ( if you want to use it )
-remote.startCompass()
-
--- Get The Latest Accelerometer Values
-local function updateAccelerometer()
-
-    -- This Runtime Listener Is An Example Of How To
-    -- Access The Remote You Can Query remote.xGravity
-    -- Or Any Other Value From Anywhere In Your Application
-
-    local xGravity = remote.xGravity
-    local yGravity = remote.yGravity
-    local zGravity = remote.zGravity
-    local xInstant = remote.xInstant
-    local yInstant = remote.yInstant
-    local zInstant = remote.zInstant
-    local isShake = remote.isShake
-    -- Only Use If Compass Activated And Running v1.1 Or Later
-    local magnetic = remote.magnetic
-
-    -- Print xGravity To Terminal
-    -- print( remote.xGravity )
-
-end
-
--- Add Enter Frame Listener
-Runtime:addEventListener( "enterFrame" , updateAccelerometer ) 
-
 new = function()
 
 local localGroup = display.newGroup()
@@ -83,10 +55,6 @@ physics.addBody (enemy, { friction =0.3, density =1.1})
 game:insert (enemy)
 enemy.myName = "enemy"
 
--- enemy ai
-local function enemyPace ()
-end
-
 -- map
 local leftwall = display.newRect( 0 , -1000, 50, 1000 + screenH )
 physics.addBody (leftwall, "static", { friction =0.3,})
@@ -99,19 +67,15 @@ game:insert( floor )
 
 --Character move Function
 local function onTilt(event)
-	-- if remote.yGravity >= .1 then
-	-- local vx, vy = char:getLinearVelocity()
-	-- char:setLinearVelocity(vx+remote.yGravity*-800)
-	-- else if remote.yGravity <= -.1 then
-	-- local vx, vy = char:getLinearVelocity()
-	-- char:setLinearVelocity(vx+remote.yGravity*-800)
-	-- end end
 	local yGravity = remote.yGravity
+	local vx, vy = char:getLinearVelocity()
+	if char.jumping == false then
 	char:applyForce(yGravity*-800)
-	print (yGravity)
+	end
 end
 
-char.maxVelocity = 300
+-- Max Velocity function for char
+char.maxVelocity = 400
 function char:enterFrame(event)
  
         local vx, vy = self:getLinearVelocity()
@@ -122,30 +86,30 @@ function char:enterFrame(event)
                 self:setLinearVelocity(vx,vy)
         end     
 end
- 
 Runtime:addEventListener( "enterFrame", char )
 
--- Character Jump Function
-charJumping = 0
-local function charJump(event)
-if charJumping == 0 then
-	--char:setLinearVelocity( 0,0 )
-	timer.performWithDelay(10, char:applyLinearImpulse( 0, -200, char.x, char.y ))
-	charJumping = 1
-end
-return true
-end
-
-local function jumpTest(event)
-        if (event.phase == "began") then
+-- Character Jump and Jump Test Functions
+local function jumpTest(self, event)
+        if (event.phase == "ended") then
             if (event.other.myName == "floor") then
-				charJumping = 0
-				print ("touching Ground")
+				self.jumping = false
 			end
-        end
+		end
 end
 
-char:addEventListener("collision", jumpTest)
+local function charJump(event)
+	local 	vx, vy = char:getLinearVelocity()
+	print (char.jumping)
+	if char.jumping == false then
+	    char:setLinearVelocity(vx,0)
+		timer.performWithDelay(10, char:applyLinearImpulse( 0, -200, char.x, char.y ))
+		char.jumping = true
+	end
+	return true
+end
+
+char.collision = jumpTest
+char:addEventListener("collision", char )
 char:addEventListener("touch", charJump)
 
 -- Distance Function
@@ -156,46 +120,47 @@ end
 
 -- On touch ball shoot function
 local function ballShootOnTouch(event)
-if (event.phase == "began" and charJump ~= true) then
-print (event.target)
-local dx=event.x-char.x-game.x
-local dy=event.y-char.y-game.y
-local touchDistance = distance(dx,dy)
-local forceMagnitude = touchDistance / 50
-ball = display.newImage("images/ball.png")
-ball.status = "ballPops"
-physics.addBody( ball, physicsData:get("ball") )
-ball.myName = "ball"
-if balls == nil then
-balls = display.newGroup();
-game:insert(ball)
-end
-balls:insert(ball)
+	if (event.phase == "began" and charJump ~= true) then
+	--getting velocity of char to add to force of ball linear impulse
+	local vx, vy = char:getLinearVelocity()
+	--getting distance of event from char to calculate power of ball linear impulse
+	local dx=event.x-char.x-game.x
+	local dy=event.y-char.y-game.y
+	local touchDistance = distance(dx,dy)
+	local forceMagnitude = touchDistance / 50
+	ball = display.newImage("images/ball.png")
+	ball.status = "ballPops"
+	physics.addBody( ball, physicsData:get("ball") )
+	ball.myName = "ball"
+	if balls == nil then
+	balls = display.newGroup();
+	game:insert(ball)
+	end
+	balls:insert(ball)
 
---if statements for controlling which side of char the ball shoots from
-if (event.x-game.x >= char.x) then
-ball.x = char.x + 60
-else
-ball.x = char.x-60
-end
---controlling y axis of ball placement
-if (event.y <= char.y-80) then --80 is to compensate for chars center reference point
-ball.y = char.y - 80
-else
-ball.y = char.y - game.y
-end
+	--if statements for controlling which side of char the ball shoots from
+	if (event.x-game.x >= char.x) then
+	ball.x = char.x + 60
+	else
+	ball.x = char.x-60
+	end
+	--controlling y axis of ball placement
+	if (event.y <= char.y-80) then --80 is to compensate for chars center reference point
+	ball.y = char.y - 80
+	else
+	ball.y = char.y - game.y
+	end
 
---math formula for figuring out radians of touch compared to char location
-local deltaX = event.x - char.x - game.x -- the game.x is to compensate for camera movement.
-local deltaY = event.y - char.y - 40 -- the 40 is to compensate for char's reference point (center)
-local angle = math.atan2(deltaY, deltaX)
-forceX = math.cos(angle)*forceMagnitude
-forceY = math.sin(angle)*forceMagnitude
-
-ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
+	--math formula for figuring out radians of touch compared to char location
+	local deltaX = event.x - char.x +vx - game.x -- the game.x is to compensate for camera movement.
+	local deltaY = event.y - char.y - 40 -- the 40 is to compensate for char's reference point (center)
+	local angle = math.atan2(deltaY, deltaX)
+	forceX = math.cos(angle)*forceMagnitude
+	forceY = math.sin(angle)*forceMagnitude
+	ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
     end
-return true
-end
+	return true
+	end
 
 -- Move Camera Function
 local function moveCamera()
@@ -209,13 +174,11 @@ local obj1 = event.object1
 local obj2 = event.object2
 if (obj1.health ~= nil) then
 obj1.health = obj1.health - 1
-print "Hit!"
 if (obj1.health == 0) then
 obj1:removeSelf()
 end end
 if (obj2.health ~= nil) then
 obj2.health = obj2.health - 1
-print "Hit!"
 if (obj2.health == 0) then
 obj2:removeSelf()
 end end

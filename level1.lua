@@ -2,6 +2,41 @@ module(..., package.seeall)
 display.setStatusBar( display.HiddenStatusBar )
 system.activate("multitouch")
 
+--Corona Remote app
+-- Load The Remote
+local remote = require("remote")
+
+-- Start The Remote On Port 8080
+remote.startServer( "8080" )
+
+-- Start The Compass ( if you want to use it )
+remote.startCompass()
+
+-- Get The Latest Accelerometer Values
+local function updateAccelerometer()
+
+    -- This Runtime Listener Is An Example Of How To
+    -- Access The Remote You Can Query remote.xGravity
+    -- Or Any Other Value From Anywhere In Your Application
+
+    local xGravity = remote.xGravity
+    local yGravity = remote.yGravity
+    local zGravity = remote.zGravity
+    local xInstant = remote.xInstant
+    local yInstant = remote.yInstant
+    local zInstant = remote.zInstant
+    local isShake = remote.isShake
+    -- Only Use If Compass Activated And Running v1.1 Or Later
+    local magnetic = remote.magnetic
+
+    -- Print xGravity To Terminal
+    -- print( remote.xGravity )
+
+end
+
+-- Add Enter Frame Listener
+Runtime:addEventListener( "enterFrame" , updateAccelerometer ) 
+
 new = function()
 
 local localGroup = display.newGroup()
@@ -64,28 +99,31 @@ game:insert( floor )
 
 --Character move Function
 local function onTilt(event)
-	if event.yGravity >= .1 then
-	local vx, vy = char:getLinearVelocity()
-	char:setLinearVelocity(vx+event.yGravity*-800)
-	else if event.yGravity <= -.1 then
-	local vx, vy = char:getLinearVelocity()
-	char:setLinearVelocity(vx+event.yGravity*-800)
-	end end
+	-- if remote.yGravity >= .1 then
+	-- local vx, vy = char:getLinearVelocity()
+	-- char:setLinearVelocity(vx+remote.yGravity*-800)
+	-- else if remote.yGravity <= -.1 then
+	-- local vx, vy = char:getLinearVelocity()
+	-- char:setLinearVelocity(vx+remote.yGravity*-800)
+	-- end end
+	local yGravity = remote.yGravity
+	char:applyForce(yGravity*-800)
+	print (yGravity)
 end
 
---This is just to display the accelerometer text on screen
-local function updateAccel()
-accelData.text = gravity
-print("Updated", accelData)
+char.maxVelocity = 300
+function char:enterFrame(event)
+ 
+        local vx, vy = self:getLinearVelocity()
+        local m = math.sqrt((vx*vx)+(vy*vy))
+        if (m>self.maxVelocity) then
+                vx=(vx/m)*self.maxVelocity
+                vy=(vy/m)*self.maxVelocity
+                self:setLinearVelocity(vx,vy)
+        end     
 end
-accelData = display.newText("data",200,200,"Arial",40)
-accelData:setTextColor(0,0,0)
-local function printAccel(event)
-gravity = event.yGravity
-timer.performWithDelay(5, updateAccel())
-print (event.yGravity,"WHAHAHA")
-end
-Runtime:addEventListener ("accelerometer", printAccel);
+ 
+Runtime:addEventListener( "enterFrame", char )
 
 -- Character Jump Function
 charJumping = 0
@@ -153,7 +191,6 @@ local deltaY = event.y - char.y - 40 -- the 40 is to compensate for char's refer
 local angle = math.atan2(deltaY, deltaX)
 forceX = math.cos(angle)*forceMagnitude
 forceY = math.sin(angle)*forceMagnitude
-char:setLinearVelocity( 0,0 )
 
 ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
     end
@@ -203,7 +240,7 @@ resetButton:addEventListener("touch", changeScene)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)
-Runtime:addEventListener ("accelerometer", onTilt);
+Runtime:addEventListener ("enterFrame", onTilt);
 
 
 return localGroup

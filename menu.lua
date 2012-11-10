@@ -1,7 +1,5 @@
-module(..., package.seeall)
-
-
-new = function()
+menu = {}
+menu.new = function()
 
 	print("Menu")
 	local localGroup = display.newGroup()
@@ -32,3 +30,5 @@ new = function()
 	return localGroup
 	
 end
+
+return menu

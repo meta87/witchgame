@@ -1,15 +1,9 @@
-module(..., package.seeall)
+level1 = {}
+level1.new = function()
+
 display.setStatusBar( display.HiddenStatusBar )
-system.activate("multitouch")
-
---Corona Remote app
--- Load The Remote
-local remote = require("remote")
-
--- Start The Remote On Port 8080
-remote.startServer( "8080" )
-
-new = function()
+local remote = require("remote")-- Load Corona Remote
+remote.startServer( "8080" )-- Start The Remote On Port 8080
 
 local localGroup = display.newGroup()
 local director = require( "director" )
@@ -226,3 +220,5 @@ Runtime:addEventListener ("enterFrame", onTilt);
 return localGroup
 
 end
+
+return level1

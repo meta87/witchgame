@@ -26,7 +26,7 @@ localGroup:insert(game)
 game.x = 0
 
 local background = display.newImage("images/background.png")
-localGroup:insert(background)
+game:insert(background)
 background:toBack()
 
 -- Character Object
@@ -68,7 +68,6 @@ game:insert( floor )
 --Character move Function
 local function onTilt(event)
 	local yGravity = remote.yGravity
-	local vx, vy = char:getLinearVelocity()
 	if char.jumping == false then
 	char:applyForce(yGravity*-800)
 	end
@@ -118,6 +117,22 @@ local distance=math.sqrt(math.pow(dx,2)+math.pow(dy,2))
 return distance
 end
 
+-- CharSpeed function calculates how fast char is moving in order to alter power of ball shoot
+local charSpeedIs = 0
+local function charSpeed()
+	local yGravity = remote.yGravity
+	local vx, vy = char:getLinearVelocity()
+	if yGravity >= 0 then
+	charSpeedIs = 0
+	else if yGravity < 0 and yGravity >= -.2 then 
+	charSpeedIs = yGravity*-20
+	else if yGravity < -.2 then 
+	charSpeedIs = yGravity*-30
+	end end end
+
+end
+
+
 -- On touch ball shoot function
 local function ballShootOnTouch(event)
 	if (event.phase == "began" and charJump ~= true) then
@@ -127,7 +142,9 @@ local function ballShootOnTouch(event)
 	local dx=event.x-char.x-game.x
 	local dy=event.y-char.y-game.y
 	local touchDistance = distance(dx,dy)
-	local forceMagnitude = touchDistance / 50
+	charSpeed()
+	print (charSpeedIs)
+	local forceMagnitude = (touchDistance / 50) + (charSpeedIs)
 	ball = display.newImage("images/ball.png")
 	ball.status = "ballPops"
 	physics.addBody( ball, physicsData:get("ball") )

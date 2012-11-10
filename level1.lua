@@ -68,9 +68,9 @@ game:insert( floor )
 --Character move Function
 local function onTilt(event)
 	local yGravity = remote.yGravity
-	if char.jumping == false then
+--	if char.jumping == false then
 	char:applyForce(yGravity*-800)
-	end
+--	end
 end
 
 -- Max Velocity function for char

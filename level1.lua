@@ -1,7 +1,7 @@
 level1 = {}
 level1.new = function()
 
-display.setStatusBar( display.HiddenStatusBar )
+local hero = require("hero")
 local remote = require("remote")-- Load Corona Remote
 remote.startServer( "8080" )-- Start The Remote On Port 8080
 
@@ -24,6 +24,10 @@ game:insert(background)
 background:toBack()
 
 -- Character Object
+local hero1 = hero.heroCreate(600,400)
+--hero1.x = 600 hero1.y = 400
+game:insert(hero1)
+
 local char = display.newImage("images/char.png")
 char.x = 300 char.y = screenH -90
 physics.addBody( char, physicsData:get("char") )

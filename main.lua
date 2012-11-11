@@ -1,4 +1,5 @@
 screenW, screenH = display.contentWidth, display.contentHeight
+display.setStatusBar( display.HiddenStatusBar )
 
 local director = require("director")
 

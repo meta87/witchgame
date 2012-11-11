@@ -1,6 +1,5 @@
 menu = {}
 menu.new = function()
-
 	print("Menu")
 	local localGroup = display.newGroup()
 		
@@ -16,7 +15,6 @@ menu.new = function()
 	playTxt.x = screenW/2 playTxt.y = screenH/2
 	playTxt:setTextColor(255,255,255)
 	localGroup:insert(playTxt)
-	
 	
 	function changeScene(e)
 		if(e.phase=="ended") then

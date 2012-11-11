@@ -4,6 +4,8 @@ level1.new = function()
 local hero = require("hero")
 local remote = require("remote")-- Load Corona Remote
 remote.startServer( "8080" )-- Start The Remote On Port 8080
+local yGravity = remote.yGravity
+
 
 local localGroup = display.newGroup()
 local director = require( "director" )
@@ -23,10 +25,11 @@ local background = display.newImage("images/background.png")
 game:insert(background)
 background:toBack()
 
--- Character Object
-local hero1 = hero.heroCreate(600,400)
---hero1.x = 600 hero1.y = 400
+-- Hero Object
+local hero1 = hero:heroCreate(600,400)
 game:insert(hero1)
+hero1.move = hero:move()
+hero1.move()
 
 local char = display.newImage("images/char.png")
 char.x = 300 char.y = screenH -90
@@ -65,7 +68,6 @@ game:insert( floor )
 
 --Character move Function
 local function onTilt(event)
-	local yGravity = remote.yGravity
 --	if char.jumping == false then
 	char:applyForce(yGravity*-800)
 --	end
@@ -96,7 +98,7 @@ end
 
 local function charJump(event)
 	local 	vx, vy = char:getLinearVelocity()
-	print (char.jumping)
+--	print (char.jumping)
 	if char.jumping == false then
 	    char:setLinearVelocity(vx,0)
 		timer.performWithDelay(10, char:applyLinearImpulse( 0, -200, char.x, char.y ))
@@ -141,7 +143,7 @@ local function ballShootOnTouch(event)
 	local dy=event.y-char.y-game.y
 	local touchDistance = distance(dx,dy)
 	charSpeed()
-	print (charSpeedIs)
+--	print (charSpeedIs)
 	local forceMagnitude = (touchDistance / 50) + (charSpeedIs)
 	ball = display.newImage("images/ball.png")
 	ball.status = "ballPops"
@@ -218,8 +220,6 @@ resetButton:addEventListener("touch", changeScene)
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
 Runtime:addEventListener("touch", ballShootOnTouch)
-Runtime:addEventListener ("enterFrame", onTilt);
-
 
 return localGroup
 

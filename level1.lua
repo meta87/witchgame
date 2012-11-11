@@ -28,8 +28,8 @@ background:toBack()
 -- Hero Object
 local hero1 = hero:heroCreate(600,400)
 game:insert(hero1)
-hero1.move = hero:move()
-hero1.move()
+local move = hero:heroMove()
+print (move)
 
 local char = display.newImage("images/char.png")
 char.x = 300 char.y = screenH -90

@@ -32,14 +32,21 @@ background:toBack()
 local hero1 = hero:heroCreate(600,400,'hero1')
 game:insert(hero1)
 local function hero1Funcs() 
-hero1:limitSpeed(event)
-hero1:move(event)
+  hero1:limitSpeed(event)
+  hero1:move(event)
 end
-local function hero1Touch(event) 
-local ball = hero1:ballShoot(event,game.x,game.y)
-balls:insert(ball)
+local function hero1Touch(event)
+  if hero1selfTouch ~= true then
+    local ball = hero1:ballShoot(event,game.x,game.y)
+    balls:insert(ball)
+  end
 end
 
+local function hero1selfTouch(event)
+  hero1:jump(event)
+end
+
+hero1:addEventListener ( "touch", hero1selfTouch)
 Runtime:addEventListener ( "enterFrame", hero1Funcs)
 Runtime:addEventListener ( "touch", hero1Touch)
 
@@ -79,16 +86,7 @@ local function jumpTest(self, event)
 		end
 end
 
-local function charJump(event)
-	local 	vx, vy = char:getLinearVelocity()
---	print (char.jumping)
-	if char.jumping == false then
-	    char:setLinearVelocity(vx,0)
-		timer.performWithDelay(10, char:applyLinearImpulse( 0, -200, char.x, char.y ))
-		char.jumping = true
-	end
-	return true
-end
+
 
 -- char.collision = jumpTest
 -- char:addEventListener("collision", char )

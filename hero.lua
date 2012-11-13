@@ -22,6 +22,16 @@ function M:heroCreate(x,y, name)
       self:applyForce(yGravity*-800)
 	end
 	
+	function hero:jump(event)
+	  if (event.phase == "began") then
+	    print (event)
+	    local 	vx, vy = self:getLinearVelocity()
+	    self:setLinearVelocity(vx,0)
+        timer.performWithDelay(10, self:applyLinearImpulse( 0, -200, self.x, self.y ))
+		return true
+	  end
+    end
+	
 	function hero:limitSpeed(event)
 	  self.maxVelocity = 400
       local vx, vy = self:getLinearVelocity()

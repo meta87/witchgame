@@ -18,6 +18,17 @@ function M:heroCreate(x,y, name)
       self:applyForce(yGravity*-800)
 	end
 	
+	function hero:limitSpeed(event)
+	  self.maxVelocity = 400
+      local vx, vy = self:getLinearVelocity()
+      local m = math.sqrt((vx*vx)+(vy*vy))
+      if (m>self.maxVelocity) then
+        vx=(vx/m)*self.maxVelocity
+        vy=(vy/m)*self.maxVelocity
+        self:setLinearVelocity(vx,vy)
+      end     
+    end
+	
 	return hero
 end
 

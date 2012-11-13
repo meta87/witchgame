@@ -30,13 +30,7 @@ local hero1 = hero:heroCreate(600,400,'hero1')
 game:insert(hero1)
 Runtime:addEventListener ( "enterFrame", function(event) hero1:move(event,remote.yGravity) print (remote.yGravity) end)
 
-
-local char = display.newImage("images/char.png")
-char.x = 300 char.y = screenH -90
-physics.addBody( char, physicsData:get("char") )
-game:insert(char)
-char.myName = "char"
-char.isFixedRotation = true
+local char = 1
 
 -- enemy object
 local enemy = display.newRect(500, 200, 50, 250)
@@ -57,28 +51,9 @@ physics.addBody (floor, "static", { friction =0.3,})
 floor.myName = "floor"
 game:insert( floor )
 
---Character move Function
-local function onTilt(event)
---	if char.jumping == false then
-	local yGravity = remote.yGravity
-	char:applyForce(yGravity*-800)
-	
---	end
-end
 
 -- Max Velocity function for char
-char.maxVelocity = 400
-function char:enterFrame(event)
- 
-        local vx, vy = self:getLinearVelocity()
-        local m = math.sqrt((vx*vx)+(vy*vy))
-        if (m>self.maxVelocity) then
-                vx=(vx/m)*self.maxVelocity
-                vy=(vy/m)*self.maxVelocity
-                self:setLinearVelocity(vx,vy)
-        end     
-end
-Runtime:addEventListener( "enterFrame", char )
+
 
 -- Character Jump and Jump Test Functions
 local function jumpTest(self, event)
@@ -100,9 +75,9 @@ local function charJump(event)
 	return true
 end
 
-char.collision = jumpTest
-char:addEventListener("collision", char )
-char:addEventListener("touch", charJump)
+-- char.collision = jumpTest
+-- char:addEventListener("collision", char )
+-- char:addEventListener("touch", charJump)
 
 -- Distance Function
 local function distance(dx,dy)
@@ -111,69 +86,65 @@ return distance
 end
 
 -- CharSpeed function calculates how fast char is moving in order to alter power of ball shoot
-local charSpeedIs = 0
-local function charSpeed()
-	local vx, vy = char:getLinearVelocity()
-	if yGravity >= 0 then
-	charSpeedIs = 0
-	else if yGravity < 0 and yGravity >= -.2 then 
-	charSpeedIs = yGravity*-20
-	else if yGravity < -.2 then 
-	charSpeedIs = yGravity*-30
-	end end end
+-- local charSpeedIs = 0
+-- local function charSpeed()
+	-- local vx, vy = char:getLinearVelocity()
+	-- if yGravity >= 0 then
+	-- charSpeedIs = 0
+	-- else if yGravity < 0 and yGravity >= -.2 then 
+	-- charSpeedIs = yGravity*-20
+	-- else if yGravity < -.2 then 
+	-- charSpeedIs = yGravity*-30
+	-- end end end
 
-end
+-- end
 
 
 -- On touch ball shoot function
-local function ballShootOnTouch(event)
-	if (event.phase == "began" and charJump ~= true) then
-	--getting velocity of char to add to force of ball linear impulse
-	local vx, vy = char:getLinearVelocity()
-	--getting distance of event from char to calculate power of ball linear impulse
-	local dx=event.x-char.x-game.x
-	local dy=event.y-char.y-game.y
-	local touchDistance = distance(dx,dy)
-	charSpeed()
---	print (charSpeedIs)
-	local forceMagnitude = (touchDistance / 50) + (charSpeedIs)
-	ball = display.newImage("images/ball.png")
-	ball.status = "ballPops"
-	physics.addBody( ball, physicsData:get("ball") )
-	ball.myName = "ball"
-	if balls == nil then
-	balls = display.newGroup();
-	game:insert(ball)
-	end
-	balls:insert(ball)
+-- local function ballShootOnTouch(event)
+	-- if (event.phase == "began" and charJump ~= true) then--getting velocity of char to add to force of ball linear impulse
+	-- local vx, vy = char:getLinearVelocity()--getting distance of event from char to calculate power of ball linear impulse
+	-- local dx=event.x-char.x-game.x
+	-- local dy=event.y-char.y-game.y
+	-- local touchDistance = distance(dx,dy)
+	-- charSpeed()--	print (charSpeedIs)
+	-- local forceMagnitude = (touchDistance / 50) + (charSpeedIs)
+	-- ball = display.newImage("images/ball.png")
+	-- ball.status = "ballPops"
+	-- physics.addBody( ball, physicsData:get("ball") )
+	-- ball.myName = "ball"
+	-- if balls == nil then
+	-- balls = display.newGroup();
+	-- game:insert(ball)
+	-- end
+	-- balls:insert(ball)
 
-	--if statements for controlling which side of char the ball shoots from
-	if (event.x-game.x >= char.x) then
-	ball.x = char.x + 60
-	else
-	ball.x = char.x-60
-	end
-	--controlling y axis of ball placement
-	if (event.y <= char.y-80) then --80 is to compensate for chars center reference point
-	ball.y = char.y - 80
-	else
-	ball.y = char.y - game.y
-	end
+	
+	-- if (event.x-game.x >= char.x) then--if statements for controlling which side of char the ball shoots from
+	-- ball.x = char.x + 60
+	-- else
+	-- ball.x = char.x-60
+	-- end
+	
+	-- if (event.y <= char.y-80) then --controlling y axis of ball placement 80 is to compensate for chars center reference point
+	-- ball.y = char.y - 80
+	-- else
+	-- ball.y = char.y - game.y
+	-- end
 
-	--math formula for figuring out radians of touch compared to char location
-	local deltaX = event.x - char.x +vx - game.x -- the game.x is to compensate for camera movement.
-	local deltaY = event.y - char.y - 40 -- the 40 is to compensate for char's reference point (center)
-	local angle = math.atan2(deltaY, deltaX)
-	forceX = math.cos(angle)*forceMagnitude
-	forceY = math.sin(angle)*forceMagnitude
-	ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
-    end
-	return true
-	end
+	-- local deltaX = event.x - char.x +vx - game.x --math formula for figuring out radians of touch compared to char location the game.x is to compensate for camera movement.
+	-- local deltaY = event.y - char.y - 40 -- the 40 is to compensate for char's reference point (center)
+	-- local angle = math.atan2(deltaY, deltaX)
+	-- forceX = math.cos(angle)*forceMagnitude
+	-- forceY = math.sin(angle)*forceMagnitude
+	-- ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
+    -- end
+	-- return true
+	-- end
 
 -- Move Camera Function
 local function moveCamera()
-game.x = -char.x + screenW /2
+game.x = -hero1.x + screenW /2
 end
 
 -- Detect Ball Collision Functions
@@ -209,10 +180,9 @@ resetButton:addEventListener("touch", changeScene)
 
 
 -- Runtimes ETC
-Runtime:addEventListener("collision", onBallCollide)
+--Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
-Runtime:addEventListener("enterFrame", onTilt)
-Runtime:addEventListener("touch", ballShootOnTouch)
+--Runtime:addEventListener("touch", ballShootOnTouch)
 
 
 return localGroup

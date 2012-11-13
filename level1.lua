@@ -37,7 +37,7 @@ hero1:ballShoot(event,game.x,game.y)
 end
 
 Runtime:addEventListener ( "enterFrame", hero1Funcs)
---Runtime:addEventListener ( "touch", hero1Touch)
+Runtime:addEventListener ( "touch", hero1Touch)
 
 -- enemy object
 local enemy = display.newRect(500, 200, 50, 250)

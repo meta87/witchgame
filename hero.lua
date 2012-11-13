@@ -1,6 +1,8 @@
 local M = {}
 
 local remote = require("remote")-- Load Corona Remote
+local level1 = require("level1")-- Load Corona Remote
+
 local utilFuncs = require("utilFuncs")
 
 remote.startServer( "8080" )-- Start The Remote On Port 8080
@@ -17,7 +19,6 @@ function M:heroCreate(x,y, name)
 	
 	function hero:move(event)
 	  local yGravity = remote.yGravity
-	  print (yGravity)
       self:applyForce(yGravity*-800)
 	end
 	
@@ -59,11 +60,11 @@ function M:heroCreate(x,y, name)
 	  ball.status = "ballPops"
 	  physics.addBody( ball, physicsData:get("ball") )
 	  ball.myName = "ball"
-	  --if balls == nil then
-	  --balls = display.newGroup();
-	  --game:insert(ball)
-	  --end
-	  --balls:insert(ball)
+	  if balls == nil then
+	  balls = display.newGroup();
+	  game:insert(ball)
+	  end
+	  balls:insert(ball)
       if (event.x-gamex >= self.x) then--if statements for controlling which side of char the ball shoots from
 	  ball.x = self.x + 60
 	  else
@@ -83,7 +84,7 @@ function M:heroCreate(x,y, name)
 	  forceY = math.sin(angle)*forceMagnitude
 	  ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
       end
-	end
+    end
 	
 	return hero
 end 

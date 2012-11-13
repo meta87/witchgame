@@ -26,10 +26,10 @@ game:insert(background)
 background:toBack()
 
 -- Hero Object
-local hero1 = hero:heroCreate(600,400)
+local hero1 = hero:heroCreate(600,400,'hero1')
 game:insert(hero1)
-local move = hero:heroMove()
-print (move)
+Runtime:addEventListener ( "enterFrame", function(event) hero1:move(event,remote.yGravity) print (remote.yGravity) end)
+
 
 local char = display.newImage("images/char.png")
 char.x = 300 char.y = screenH -90
@@ -37,15 +37,6 @@ physics.addBody( char, physicsData:get("char") )
 game:insert(char)
 char.myName = "char"
 char.isFixedRotation = true
-
--- Ball Object
-local function ballcreate()
-local ball = display.newImage("images/ball.png")
-ball.x = char.x + 40 ball.y = char.y + 40
-physics.addBody( ball, physicsData:get("ball") )
-game:insert( ball )
-ball.myName = "ball"
-end
 
 -- enemy object
 local enemy = display.newRect(500, 200, 50, 250)
@@ -69,7 +60,9 @@ game:insert( floor )
 --Character move Function
 local function onTilt(event)
 --	if char.jumping == false then
+	local yGravity = remote.yGravity
 	char:applyForce(yGravity*-800)
+	
 --	end
 end
 
@@ -120,7 +113,6 @@ end
 -- CharSpeed function calculates how fast char is moving in order to alter power of ball shoot
 local charSpeedIs = 0
 local function charSpeed()
-	local yGravity = remote.yGravity
 	local vx, vy = char:getLinearVelocity()
 	if yGravity >= 0 then
 	charSpeedIs = 0
@@ -219,7 +211,9 @@ resetButton:addEventListener("touch", changeScene)
 -- Runtimes ETC
 Runtime:addEventListener("collision", onBallCollide)
 Runtime:addEventListener("enterFrame", moveCamera )
+Runtime:addEventListener("enterFrame", onTilt)
 Runtime:addEventListener("touch", ballShootOnTouch)
+
 
 return localGroup
 

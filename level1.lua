@@ -21,12 +21,19 @@ game:insert(balls)
 localGroup:insert(game)
 game.x = 0
 
--- Move Camera Function
-
-
 local background = display.newImage("images/background.png")
 game:insert(background)
 background:toBack()
+
+-- map
+local leftwall = display.newRect( 0 , -1000, 50, 1000 + screenH )
+physics.addBody (leftwall, "static", { friction =0.3,})
+game:insert( leftwall )
+
+local floor = display.newRect( 0, screenH -20 , 5000, 50 )
+physics.addBody (floor, "static", { friction =0.3,})
+floor.myName = "floor"
+game:insert( floor )
 
 -- Hero Object
 local hero1 = hero:heroCreate(600,400,'hero1')
@@ -36,17 +43,22 @@ local function hero1Funcs()
   hero1:move(event)
 end
 local function hero1Touch(event)
-  if hero1selfTouch ~= true then
+  if event.phase == "began" and hero1selfTouch ~= true then
     local ball = hero1:ballShoot(event,game.x,game.y)
     balls:insert(ball)
   end
 end
 
-local function hero1selfTouch(event)
+local function hero1SelfTouch(event)
   hero1:jump(event)
 end
 
-hero1:addEventListener ( "touch", hero1selfTouch)
+local function hero1Collisions(event)
+  hero1:jumpTest(event)
+end
+
+hero1:addEventListener ( "touch", hero1SelfTouch)
+hero1:addEventListener ( "collision", hero1Collisions)
 Runtime:addEventListener ( "enterFrame", hero1Funcs)
 Runtime:addEventListener ( "touch", hero1Touch)
 
@@ -63,34 +75,6 @@ physics.addBody (enemy, { friction =0.3, density =1.1})
 game:insert (enemy)
 enemy.myName = "enemy"
 
--- map
-local leftwall = display.newRect( 0 , -1000, 50, 1000 + screenH )
-physics.addBody (leftwall, "static", { friction =0.3,})
-game:insert( leftwall )
-
-local floor = display.newRect( 0, screenH -20 , 5000, 50 )
-physics.addBody (floor, "static", { friction =0.3,})
-floor.myName = "floor"
-game:insert( floor )
-
-
--- Max Velocity function for char
-
-
--- Character Jump and Jump Test Functions
-local function jumpTest(self, event)
-        if (event.phase == "ended") then
-            if (event.other.myName == "floor") then
-				self.jumping = false
-			end
-		end
-end
-
-
-
--- char.collision = jumpTest
--- char:addEventListener("collision", char )
--- char:addEventListener("touch", charJump)
 
 
 

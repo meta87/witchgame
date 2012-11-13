@@ -16,6 +16,7 @@ function M:heroCreate(x,y, name)
 	hero.x = x or 0 hero.y = y or 0
 	physics.addBody( hero, physicsData:get("char") )
 	hero.isFixedRotation = true
+	hero.jumping = false
 	
 	function hero:move(event)
 	  local yGravity = remote.yGravity
@@ -23,12 +24,21 @@ function M:heroCreate(x,y, name)
 	end
 	
 	function hero:jump(event)
-	  if (event.phase == "began") then
-	    print (event)
+	  if (event.phase == "began" and self.jumping == false) then
 	    local 	vx, vy = self:getLinearVelocity()
 	    self:setLinearVelocity(vx,0)
         timer.performWithDelay(10, self:applyLinearImpulse( 0, -200, self.x, self.y ))
+		self.jumping = true
 		return true
+	  end
+    end
+	
+	function hero:jumpTest(event)
+      if (event.phase == " canceled" and event.other.myName == "floor") then
+	  print (event.other.myName,self.jumping)
+	  self.jumping = false
+	  else
+	  self.jumping = true
 	  end
     end
 	
@@ -70,23 +80,16 @@ function M:heroCreate(x,y, name)
 	    ball.status = "ballPops"
 	    physics.addBody( ball, physicsData:get("ball") )
 	    ball.myName = "ball"
-	    -- if balls == nil then
-	      -- balls = display.newGroup();
-	      -- game:insert(ball)
-	    -- end
-	    --balls:insert(ball)
-      if (event.x-gamex >= self.x) then--if statements for controlling which side of char the ball shoots from
+        if (event.x-gamex >= self.x) then--if statements for controlling which side of char the ball shoots from
 	      ball.x = self.x+50
 	    else
 	      ball.x = self.x-50
 	    end
-	
 	    if (event.y <= self.y-80) then --controlling y axis of ball placement 80 is to compensate for chars center reference point
 	     ball.y = self.y - 80
 	    else
 	      ball.y = self.y - gamey
 	    end
-
 	    local deltaX = event.x - self.x +vx - gamex --math formula for figuring out radians of touch compared to char location the game.x is to compensate for camera movement.
 	    local deltaY = event.y - self.y - 40 -- the 40 is to compensate for char's reference point (center)
 	    local angle = math.atan2(deltaY, deltaX)

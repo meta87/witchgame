@@ -49,41 +49,42 @@ function M:heroCreate(x,y, name)
 	
     function hero:ballShoot(event,gamex,gamey)
 	  if (event.phase == "began") then
-	  local vx, vy = self:getLinearVelocity()--getting distance of event from char to calculate power of ball linear impulse
-	  local dx=event.x-self.x-gamex
-	  local dy=event.y-self.y-gamey
-	  print ("dx",dx)
-	  local touchDistance = utilFuncs:distance(dx,dy)
-	  local heroSpeed = hero:speed()--	print (charSpeedIs)
-	  local forceMagnitude = (touchDistance / 50) + (heroSpeed)
-	  ball = display.newImage("images/ball.png")
-	  ball.status = "ballPops"
-	  physics.addBody( ball, physicsData:get("ball") )
-	  ball.myName = "ball"
-	  if balls == nil then
-	  balls = display.newGroup();
-	  game:insert(ball)
-	  end
-	  balls:insert(ball)
+	    local vx, vy = self:getLinearVelocity()--getting distance of event from char to calculate power of ball linear impulse
+	    local dx=event.x-self.x-gamex
+	    local dy=event.y-self.y-gamey
+	    print ("dx",dx)
+	    local touchDistance = utilFuncs:distance(dx,dy)
+	    local heroSpeed = hero:speed()--	print (charSpeedIs)
+	    local forceMagnitude = (touchDistance / 50) + (heroSpeed)
+	    ball = display.newImage("images/ball.png")
+	    ball.status = "ballPops"
+	    physics.addBody( ball, physicsData:get("ball") )
+	    ball.myName = "ball"
+	    -- if balls == nil then
+	      -- balls = display.newGroup();
+	      -- game:insert(ball)
+	    -- end
+	    --balls:insert(ball)
       if (event.x-gamex >= self.x) then--if statements for controlling which side of char the ball shoots from
-	  ball.x = self.x + 60
-	  else
-	  ball.x = self.x-60
-	  end
+	      ball.x = self.x+50
+	    else
+	      ball.x = self.x-50
+	    end
 	
-	  if (event.y <= self.y-80) then --controlling y axis of ball placement 80 is to compensate for chars center reference point
-	  ball.y = self.y - 80
-	  else
-	  ball.y = self.y - gamey
-	  end
+	    if (event.y <= self.y-80) then --controlling y axis of ball placement 80 is to compensate for chars center reference point
+	     ball.y = self.y - 80
+	    else
+	      ball.y = self.y - gamey
+	    end
 
-	  local deltaX = event.x - self.x +vx - gamex --math formula for figuring out radians of touch compared to char location the game.x is to compensate for camera movement.
-	  local deltaY = event.y - self.y - 40 -- the 40 is to compensate for char's reference point (center)
-	  local angle = math.atan2(deltaY, deltaX)
-	  forceX = math.cos(angle)*forceMagnitude
-	  forceY = math.sin(angle)*forceMagnitude
-	  ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
+	    local deltaX = event.x - self.x +vx - gamex --math formula for figuring out radians of touch compared to char location the game.x is to compensate for camera movement.
+	    local deltaY = event.y - self.y - 40 -- the 40 is to compensate for char's reference point (center)
+	    local angle = math.atan2(deltaY, deltaX)
+	    forceX = math.cos(angle)*forceMagnitude
+	    forceY = math.sin(angle)*forceMagnitude
+	    ball:applyLinearImpulse( forceX, forceY, ball.x, ball.y )
       end
+	  return ball
     end
 	
 	return hero

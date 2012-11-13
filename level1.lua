@@ -1,25 +1,28 @@
 level1 = {}
 level1.new = function()
 
+local director = require( "director" )
 local hero = require("hero")
 local remote = require("remote")-- Load Corona Remote
 remote.startServer( "8080" )-- Start The Remote On Port 8080
 local yGravity = remote.yGravity
 
-
 local localGroup = display.newGroup()
-local director = require( "director" )
 
 local physics = require "physics"
 physics.start();
 
 local physicsData = (require "shapedefs").physicsData() -- This is physicseditor
 
-local game = display.newGroup();
-local balls = display.newGroup();
+
+local game = display.newGroup(); -- Creating Local Groups. Game group is used by the moveCamera function
+local balls = display.newGroup(); 
 game:insert(balls)
 localGroup:insert(game)
 game.x = 0
+
+-- Move Camera Function
+
 
 local background = display.newImage("images/background.png")
 game:insert(background)
@@ -33,11 +36,16 @@ hero1:limitSpeed(event)
 hero1:move(event)
 end
 local function hero1Touch(event) 
-hero1:ballShoot(event,game.x,game.y)
+local ball = hero1:ballShoot(event,game.x,game.y)
+balls:insert(ball)
 end
 
 Runtime:addEventListener ( "enterFrame", hero1Funcs)
 Runtime:addEventListener ( "touch", hero1Touch)
+
+local function moveCamera()
+game.x = -hero1.x + screenW /2
+end
 
 -- enemy object
 local enemy = display.newRect(500, 200, 50, 250)
@@ -86,18 +94,7 @@ end
 -- char:addEventListener("collision", char )
 -- char:addEventListener("touch", charJump)
 
--- Distance Function
 
-
-
-
-
-
-
--- Move Camera Function
-local function moveCamera()
-game.x = -hero1.x + screenW /2
-end
 
 -- Detect Ball Collision Functions
 local function onBallCollide(event)

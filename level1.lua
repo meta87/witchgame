@@ -3,7 +3,6 @@ level1.new = function()
 
 local director = require( "director" )
 local hero = require("hero")
-local enemy1 = require("enemy1")
 local utilFuncs = require("utilFuncs")
 local remote = require("remote")-- Load Corona Remote
 remote.startServer( "8080" )-- Start The Remote On Port 8080
@@ -39,53 +38,72 @@ floor.jumpable = "yes"
 game:insert( floor )
 
 -- Hero Object
-local hero1 = hero:create(600,400,'hero1')
+local hero1 = hero:heroCreate(600,400,'hero1')
 game:insert(hero1)
 local function hero1Funcs() 
   hero1:limitSpeed(event)
   hero1:move(event)
 end
 local function hero1Touch(event)
-  --if event.phase == "began" then
-    --if hero1selfTouch ~= true then
-      local ball = hero1:ballShoot(event,game.x,game.y)
-      balls:insert(ball)
-	--end
-  --end
+  if event.phase == "began" and hero1selfTouch ~= true then
+    local ball = hero1:ballShoot(event,game.x,game.y)
+    balls:insert(ball)
+  end
 end
 
 local function hero1SelfTouch(event)
   hero1:jump(event)
 end
 
--- local function hero1Collisions(event)
-  -- print ("jumpTest")
-  -- hero1:jumpTest(event)
--- end
+local function hero1Collisions(event)
+  print ("jumpTest")
+  hero1:jumpTest(event)
+end
 
-local function collisionFuncs(event)
+hero1:addEventListener ( "touch", hero1SelfTouch)
+hero1:addEventListener ( "collision", hero1Collisions)
+Runtime:addEventListener ( "enterFrame", hero1Funcs)
+Runtime:addEventListener ( "touch", hero1Touch)
+
+
+local function onBallCollision(event)
     if event.phase == "ended" then
 	utilFuncs:onBallCollision(event)
 	end
 end
 
--- Enemy 1 
---local enemy1 = enemy1:create(900,400,'enemy1')
---print (enemy1.myName)
---game:insert(enemy1)
 
-hero1:addEventListener ( "touch", hero1SelfTouch)
--- hero1:addEventListener ( "collision", hero1Collisions)
-Runtime:addEventListener ( "enterFrame", hero1Funcs)
-Runtime:addEventListener ( "touch", hero1Touch)
-Runtime:addEventListener("collision", collisionFuncs)
-Runtime:addEventListener("enterFrame", moveCamera )
+local function moveCamera()
+game.x = -hero1.x + screenW /2
+end
+
+-- enemy object
+local enemy = display.newRect(500, 200, 50, 250)
+enemy:setFillColor(255,0,0)
+enemy.status = "ballPops" -- ballPops means ball is removed when colliding with this object
+enemy.health = 3 -- each ball collision is 1
+physics.addBody (enemy, { friction =0.3, density =1.1})
+game:insert (enemy)
+enemy.myName = "enemy"
+
+
+
+
+-- Detect Ball Collision Functions
+
 
 --reset level
--- local resetButton = display.newRect(0, 0, 200, 50)
--- resetButton:setFillColor(255,0,0)
--- resetButton.scene = "menu"
--- resetButton:addEventListener("touch", changeScene)
+local resetButton = display.newRect(0, 0, 200, 50)
+resetButton:setFillColor(255,0,0)
+resetButton.scene = "menu"
+resetButton:addEventListener("touch", changeScene)
+
+
+-- Runtimes ETC
+Runtime:addEventListener("collision", onBallCollision)
+Runtime:addEventListener("enterFrame", moveCamera )
+--Runtime:addEventListener("touch", ballShootOnTouch)
+
 
 return localGroup
 

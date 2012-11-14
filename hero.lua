@@ -9,7 +9,7 @@ local physicsData = (require "shapedefs").physicsData() -- This is physicseditor
 yGravity = remote.yGravity
 
 --create hero function
-function M:create(x,y, name)
+function M:heroCreate(x,y, name)
 	local hero = display.newImage("images/char.png")
 	hero.name = name
 	hero.x = x or 0 hero.y = y or 0
@@ -24,10 +24,11 @@ function M:create(x,y, name)
 	
 	function hero:jumpTest(event)
 	  local vx, vy = self:getLinearVelocity()
-      -- if (event.phase == "began" and event.other.jumpable == "yes") then
-	  -- self.jumping = false
-	  -- return true
-	  -- end
+      if (event.phase == "began" and event.other.jumpable == "yes") then
+      --print ("Remote Jumptest",event.other.myName)
+	  self.jumping = false
+	  return true
+	  end
     end
 	
 	function hero:jump(event)

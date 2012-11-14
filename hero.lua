@@ -2,7 +2,6 @@ local M = {}
 
 local remote = require("remote")-- Load Corona Remote
 local level1 = require("level1")-- Load Corona Remote
-
 local utilFuncs = require("utilFuncs")
 
 remote.startServer( "8080" )-- Start The Remote On Port 8080
@@ -23,8 +22,17 @@ function M:heroCreate(x,y, name)
       self:applyForce(yGravity*-800)
 	end
 	
+	function hero:jumpTest(event)
+	  local vx, vy = self:getLinearVelocity()
+      if (event.phase == "began" and event.other.jumpable == "yes") then
+      --print ("Remote Jumptest",event.other.myName)
+	  self.jumping = false
+	  return true
+	  end
+    end
+	
 	function hero:jump(event)
-	  if (event.phase == "began" and self.jumping == false) then
+	  if (event.phase == "began" and self.jumping ~= true) then
 	    local 	vx, vy = self:getLinearVelocity()
 	    self:setLinearVelocity(vx,0)
         timer.performWithDelay(10, self:applyLinearImpulse( 0, -200, self.x, self.y ))
@@ -33,14 +41,7 @@ function M:heroCreate(x,y, name)
 	  end
     end
 	
-	function hero:jumpTest(event)
-      if (event.phase == " canceled" and event.other.myName == "floor") then
-	  print (event.other.myName,self.jumping)
-	  self.jumping = false
-	  else
-	  self.jumping = true
-	  end
-    end
+
 	
 	function hero:limitSpeed(event)
 	  self.maxVelocity = 400
@@ -80,6 +81,7 @@ function M:heroCreate(x,y, name)
 	    ball.status = "ballPops"
 	    physics.addBody( ball, physicsData:get("ball") )
 	    ball.myName = "ball"
+		ball.jumpable = "no"
         if (event.x-gamex >= self.x) then--if statements for controlling which side of char the ball shoots from
 	      ball.x = self.x+50
 	    else

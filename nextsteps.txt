@@ -1,0 +1,8 @@
+Witchgame next steps:
+
+* Separate all classes and objects into remote modules.
+
+* Implement parallax 3rd party class
+
+* Simple Enemy Ai
+

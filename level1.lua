@@ -3,6 +3,7 @@ level1.new = function()
 
 local director = require( "director" )
 local hero = require("hero")
+local utilFuncs = require("utilFuncs")
 local remote = require("remote")-- Load Corona Remote
 remote.startServer( "8080" )-- Start The Remote On Port 8080
 local yGravity = remote.yGravity
@@ -33,6 +34,7 @@ game:insert( leftwall )
 local floor = display.newRect( 0, screenH -20 , 5000, 50 )
 physics.addBody (floor, "static", { friction =0.3,})
 floor.myName = "floor"
+floor.jumpable = "yes"
 game:insert( floor )
 
 -- Hero Object
@@ -54,6 +56,7 @@ local function hero1SelfTouch(event)
 end
 
 local function hero1Collisions(event)
+  print ("jumpTest")
   hero1:jumpTest(event)
 end
 
@@ -79,21 +82,6 @@ enemy.myName = "enemy"
 
 
 -- Detect Ball Collision Functions
-local function onBallCollide(event)
-if ( event.phase == "ended") then
-local obj1 = event.object1
-local obj2 = event.object2
-if (obj1.health ~= nil) then
-obj1.health = obj1.health - 1
-if (obj1.health == 0) then
-obj1:removeSelf()
-end end
-if (obj2.health ~= nil) then
-obj2.health = obj2.health - 1
-if (obj2.health == 0) then
-obj2:removeSelf()
-end end
-
 if event.object1.myName == "ball" and event.object2.status == "ballPops" then
 event.object1:removeSelf()
 else if event.object2.myName == "ball" and event.object1.status == "ballPops" then

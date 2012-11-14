@@ -5,6 +5,8 @@ function M:distance(dx,dy)
   return distance
 end
 
+-- Removes ball on collision with objects marked "ballPops"
+-- NEED TO SEPARATE HEALTH FUNCTION
 function M:onBallCollision(event)
   if (event.phase == "ended") then
     local obj1 = event.object1

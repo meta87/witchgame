@@ -65,6 +65,14 @@ hero1:addEventListener ( "collision", hero1Collisions)
 Runtime:addEventListener ( "enterFrame", hero1Funcs)
 Runtime:addEventListener ( "touch", hero1Touch)
 
+
+local function onBallCollision(event)
+    if event.phase == "ended" then
+	utilFuncs:onBallCollision(event)
+	end
+end
+
+
 local function moveCamera()
 game.x = -hero1.x + screenW /2
 end
@@ -82,14 +90,7 @@ enemy.myName = "enemy"
 
 
 -- Detect Ball Collision Functions
-if event.object1.myName == "ball" and event.object2.status == "ballPops" then
-event.object1:removeSelf()
-else if event.object2.myName == "ball" and event.object1.status == "ballPops" then
-event.object2:removeSelf()
-end
-end
-end
-end
+
 
 --reset level
 local resetButton = display.newRect(0, 0, 200, 50)
@@ -99,7 +100,7 @@ resetButton:addEventListener("touch", changeScene)
 
 
 -- Runtimes ETC
---Runtime:addEventListener("collision", onBallCollide)
+Runtime:addEventListener("collision", onBallCollision)
 Runtime:addEventListener("enterFrame", moveCamera )
 --Runtime:addEventListener("touch", ballShootOnTouch)
 

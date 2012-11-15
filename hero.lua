@@ -20,7 +20,7 @@ function M:heroCreate(x,y, name)
 	
 	function hero:move(event)
 	  local yGravity = remote.yGravity
-      self:applyForce(yGravity*-800)
+      self:applyForce(yGravity*-2600)
 	end
 	
 	function hero:jumpTest(event)
@@ -32,11 +32,13 @@ function M:heroCreate(x,y, name)
 	  end
     end
 	
+	
 	function hero:jump(event)
 	  if (event.phase == "began" and self.jumping ~= true) then
 	    local 	vx, vy = self:getLinearVelocity()
 	    self:setLinearVelocity(vx,0)
-        timer.performWithDelay(10, self:applyLinearImpulse( 0, -200, self.x, self.y ))
+        local jump = function() self:applyForce( 0, -4000, self.x, self.y) end
+		timer.performWithDelay(1, jump, 4)
 		self.jumping = true
 		return true
 	  end
@@ -68,19 +70,11 @@ function M:heroCreate(x,y, name)
 	  end end end
 	  return heroSpeed
     end
-	
-	local function ballShootPauser2(obj)
-	   
-	  print("TIS TRUER") 
-	end
-	
+
 	local function ballShootPauser()
 	  ballShootPause = true  
 	  print("TIS TRUE") 
 	end
-	
-
-
 	
     function hero:ballShoot(event,gamex,gamey)
 	  if (event.phase == "began" and ballShootPause == true) then
@@ -102,11 +96,8 @@ function M:heroCreate(x,y, name)
 	    else
 	      ball.x = self.x-50
 	    end
-	    -- if (event.y <= self.y-80) then --controlling y axis of ball placement 80 is to compensate for chars center reference point
 	     ball.y = self.y - 80
-	    -- else
-	      -- ball.y = self.y - gamey
-	    -- end
+
 	    local deltaX = event.x - self.x +vx - gamex --math formula for figuring out radians of touch compared to char location the game.x is to compensate for camera movement.
 	    local deltaY = event.y - self.y - 40 -- the 40 is to compensate for char's reference point (center)
 	    local angle = math.atan2(deltaY, deltaX)

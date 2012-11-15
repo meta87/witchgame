@@ -8,3 +8,5 @@ use multitouch for secondary move
 
 Multitouch, makes a wall in between the two fingers
 
+Main goal: get to end of the game and beat final boss. Each time you die, you must start
+over completely, but will retain any items and xp from previous runs. 

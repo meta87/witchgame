@@ -3,6 +3,8 @@ level1.new = function()
 
 local director = require( "director" )
 local hero = require("hero")
+local enemy1 = require("enemy1")
+
 local utilFuncs = require("utilFuncs")
 local remote = require("remote")-- Load Corona Remote
 remote.startServer( "8080" )-- Start The Remote On Port 8080
@@ -12,6 +14,8 @@ local localGroup = display.newGroup()
 
 local physics = require "physics"
 physics.start();
+physics.setGravity(0,50)
+
 
 local physicsData = (require "shapedefs").physicsData() -- This is physicseditor
 
@@ -50,46 +54,29 @@ local function hero1Touch(event)
     balls:insert(ball)
   end
 end
-
 local function hero1SelfTouch(event)
   hero1:jump(event)
 end
-
 local function hero1Collisions(event)
   print ("jumpTest")
   hero1:jumpTest(event)
 end
-
-hero1:addEventListener ( "touch", hero1SelfTouch)
-hero1:addEventListener ( "collision", hero1Collisions)
-Runtime:addEventListener ( "enterFrame", hero1Funcs)
-Runtime:addEventListener ( "touch", hero1Touch)
-
-
 local function onBallCollision(event)
     if event.phase == "ended" then
 	utilFuncs:onBallCollision(event)
 	end
 end
 
+-- enemy object
+local enemy1 = enemy1:enemy1Create(800,400,'enemy1')
+game:insert(enemy1,enemy1Origin)
 
+--CAMERA FUNCTION
 local function moveCamera()
 game.x = -hero1.x + screenW /2
+--enemy1:move()
 end
 
--- enemy object
-local enemy = display.newRect(500, 200, 50, 250)
-enemy:setFillColor(255,0,0)
-enemy.status = "ballPops" -- ballPops means ball is removed when colliding with this object
-enemy.health = 3 -- each ball collision is 1
-physics.addBody (enemy, { friction =0.3, density =1.1})
-game:insert (enemy)
-enemy.myName = "enemy"
-
-
-
-
--- Detect Ball Collision Functions
 
 
 --reset level
@@ -98,12 +85,13 @@ resetButton:setFillColor(255,0,0)
 resetButton.scene = "menu"
 resetButton:addEventListener("touch", changeScene)
 
-
 -- Runtimes ETC
+hero1:addEventListener ( "touch", hero1SelfTouch)
+hero1:addEventListener ( "collision", hero1Collisions)
 Runtime:addEventListener("collision", onBallCollision)
 Runtime:addEventListener("enterFrame", moveCamera )
---Runtime:addEventListener("touch", ballShootOnTouch)
-
+Runtime:addEventListener ( "enterFrame", hero1Funcs)
+Runtime:addEventListener ( "touch", hero1Touch)
 
 return localGroup
 

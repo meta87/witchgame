@@ -10,7 +10,9 @@ yGravity = remote.yGravity
 
 --create hero function
 function M:heroCreate(x,y, name)
+    local game = display.newGroup();
 	local hero = display.newImage("images/char.png")
+	game:insert(hero)
 	hero.name = name
 	ballShootPause = true
 	hero.x = x or 0 hero.y = y or 0
@@ -77,7 +79,8 @@ function M:heroCreate(x,y, name)
 	end
 	
     function hero:ballShoot(event,gamex,gamey)
-	  if (event.phase == "began" and ballShootPause == true) then
+	  
+	  if (event.phase == "began" and ballShootPause == true ) then
 	    ballShootPause = false
 	    local vx, vy = self:getLinearVelocity()--getting distance of event from char to calculate power of ball linear impulse
 	    local dx=event.x-self.x-gamex

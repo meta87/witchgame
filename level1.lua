@@ -43,19 +43,23 @@ game:insert( floor )
 
 -- Hero Object
 local hero1 = hero:heroCreate(600,400,'hero1')
+local hero2 = hero:heroCreate(800,400,'hero1')
+
 game:insert(hero1)
+game:insert(hero2)
 local function hero1Funcs() 
   hero1:limitSpeed(event)
   hero1:move(event)
 end
 local function hero1Touch(event)
-  if event.phase == "began" and hero1selfTouch ~= true then
+  if event.phase == "began" and jumpButton ~= true then
     local ball = hero1:ballShoot(event,game.x,game.y)
     balls:insert(ball)
   end
 end
-local function hero1SelfTouch(event)
+local function jumpTouch(event)
   hero1:jump(event)
+  return true
 end
 local function hero1Collisions(event)
   print ("jumpTest")
@@ -74,7 +78,7 @@ game:insert(enemy1,enemy1Origin)
 --CAMERA FUNCTION
 local function moveCamera()
 game.x = -hero1.x + screenW /2
---enemy1:move()
+
 end
 
 
@@ -85,8 +89,12 @@ resetButton:setFillColor(255,0,0)
 resetButton.scene = "menu"
 resetButton:addEventListener("touch", changeScene)
 
+local jumpButton = display.newRect(0, screenH-50, 200, 50)
+jumpButton:setFillColor(255,0,0)
+
+jumpButton:addEventListener("touch", jumpTouch)
+
 -- Runtimes ETC
-hero1:addEventListener ( "touch", hero1SelfTouch)
 hero1:addEventListener ( "collision", hero1Collisions)
 Runtime:addEventListener("collision", onBallCollision)
 Runtime:addEventListener("enterFrame", moveCamera )

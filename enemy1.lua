@@ -5,10 +5,10 @@ local utilFuncs = require("utilFuncs")
 
 function M:enemy1Create(x,y,name)
   local enemy1 = display.newRect(x,y, 50, 100)
-  local enemy1Origin = display.newRect(enemy1.x,enemy1.y,5,5)
+  local enemy1RightBox = display.newRect(x+25,y,5,5)
   local objGroup = display.newGroup() -- group for enemy and its origin rectangle
   objGroup:insert(enemy1)
-  objGroup:insert(enemy1Origin)
+  objGroup:insert(enemy1RightBox)
   enemy1:setFillColor(255,0,0)
  -- enemy1.x = 800 enemy1.y = 400
   enemy1.status = "ballPops" -- ballPops means ball is removed when colliding with this object
@@ -20,36 +20,9 @@ function M:enemy1Create(x,y,name)
 
   
   -- function enemy1:move()
-    
-    -- local vx, vy = self:getLinearVelocity()
-	-- function enemy1:moveLeft()
-	-- print (self.loop)
-	  -- if self.loop == "left" then
-	    --timer:performWithDelay(500, self:applyForce(3))
---		timer.performWithDelay(100, self:applyForce(100))
-
-		--self.loop = "right"
- 	    --self:moveRight()
-	  -- end
-    -- end
-	-- function enemy1:moveRight()
-	  -- for i = 1, 50 do
-	    -- timer:performWithDelay(50, self:applyLinearImpulse(-3,0,self.x,self.y))
-		-- i = i + 1
-      -- end 
-	  -- self:moveLeft()
-    -- end
-	-- self:moveLeft()
-    -- if self.startx < 50 then
-      -- self:applyLinearImpulse(3,0,self.x,self.y)
-      -- self.startx = self.startx + 1
-    -- else if self.startx == 50 then
-      -- self.startx = 100
-    -- else if self.startx > 50 then
-	  -- self:applyLinearImpulse(-3,0,self.x,self.y)
-      -- self.startx = self.startx - 1
-	-- end end end
-    	
+ --   local direction = 500
+    --self:setLinearImpulse(direction,0)
+	--self.pathfinding = enemy1:pathfinding(event)
   -- end
   
   return enemy1
